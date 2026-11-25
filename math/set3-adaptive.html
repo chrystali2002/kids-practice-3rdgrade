@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Set 3 Adaptive | Kids Practice Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #eef2f6;
+      color: #1e293b;
+      user-select: none;
+    }
+
+    /* Problem text typography */
+    .passage-text {
+      font-family: 'Merriweather', Georgia, serif;
+      line-height: 1.85;
+      user-select: text;
+    }
+
+    .poem-stanza {
+      font-family: 'Merriweather', Georgia, serif;
+      line-height: 2.0;
+      user-select: text;
+    }
+
+    /* Highlight Colors (Yellow & Pink) */
+    .map-highlight-yellow {
+      background-color: #fef08a;
+      color: #1e293b;
+      border-radius: 3px;
+      padding: 1px 0;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .map-highlight-pink {
+      background-color: #fbcfe8;
+      color: #1e293b;
+      border-radius: 3px;
+      padding: 1px 0;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    /* Custom Cursor when Highlighter is Active */
+    .highlighter-yellow-active .passage-text,
+    .highlighter-yellow-active .poem-stanza {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23eab308' stroke='%231e293b' stroke-width='1.5'><path d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'/></svg>") 0 24, text;
+    }
+
+    .highlighter-pink-active .passage-text,
+    .highlighter-pink-active .poem-stanza {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23ec4899' stroke='%231e293b' stroke-width='1.5'><path d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'/></svg>") 0 24, text;
+    }
+
+    /* Eliminated (Strike-Through) Answer Choice Styling */
+    .choice-eliminated {
+      opacity: 0.52;
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    .choice-eliminated .choice-text {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      text-decoration-color: #ef4444;
+      color: #64748b;
+    }
+
+    /* Iconic NWEA Blue Forward Arrow Button */
+    .nwea-next-btn {
+      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+      box-shadow: 0 4px 12px rgba(3, 105, 161, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.16s ease;
+    }
+    .nwea-next-btn:hover:not(.is-disabled) {
+      background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(3, 105, 161, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .nwea-next-btn:active:not(.is-disabled) {
+      transform: translateY(0);
+    }
+    .nwea-next-btn.is-disabled {
+      background: #cbd5e1;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    @keyframes gentleShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .shake-prompt {
+      animation: gentleShake 0.35s ease-in-out;
+    }
+
+    /* Movable Line Reader Guide Overlay */
+    #line-reader-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: rgba(254, 249, 195, 0.28);
+      border-top: 2px solid #0284c7;
+      border-bottom: 2px solid #0284c7;
+      pointer-events: none;
+      z-index: 40;
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.14);
+      transition: top 0.04s linear;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- ==================== 1. NWEA LOGIN / START SCREEN ==================== -->
+  <div id="start-screen" class="relative flex-1 flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-[#0f172a] via-[#1e3a5f] to-[#005a9e]">
+    <a href="../index.html" class="absolute top-4 left-4 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-sm font-bold border border-white/25">&larr; Home</a>
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      
+      <!-- Top NWEA-style Brand Banner -->
+      <div class="bg-[#0f172a] text-white px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#0284c7] flex items-center justify-center text-white font-extrabold text-lg shadow-md">
+            M
+          </div>
+          <div>
+            <div class="text-[11px] font-bold uppercase tracking-widest text-sky-300">MAP-Style Math Practice (not affiliated with NWEA)</div>
+            <h1 class="text-base sm:text-lg font-bold text-white">Math 2–5 • Math Set 3 Adaptive</h1>
+          </div>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+          Fall 3rd Grade • Dynamic
+        </span>
+      </div>
+
+      <!-- Login & Configuration Content -->
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 text-sm text-slate-700 flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#0284c7] text-white flex items-center justify-center shrink-0 font-bold text-base mt-0.5">
+            ⚡
+          </div>
+          <div>
+            <p class="font-bold text-slate-900">3rd-Grade Adaptive Math Practice (10 Questions)</p>
+            <p class="text-slate-600 mt-0.5">Like an adaptive test, every answer adjusts the next question automatically—starting right at Fall 3rd-grade level (RIT ~188) and stepping gently up or down so you build confidence and mastery. Use scratch paper for working out!</p>
+          </div>
+        </div>
+
+        <!-- Student Name & Session Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Student Name</label>
+            <input id="student-name-input" type="text" value="" placeholder="Type your first name" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-[#0284c7] focus:bg-white transition" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Assigned Test</label>
+            <div class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-700 font-semibold flex items-center justify-between">
+              <span>Math Set 3 Adaptive</span>
+              <span class="text-xs font-bold text-[#0284c7] bg-sky-100 px-2 py-0.5 rounded-md">10 Questions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Selector -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Choose Testing Mode</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <button type="button" onclick="selectMode('tutor')" id="mode-btn-tutor" class="p-4 rounded-xl border-2 border-[#0284c7] bg-sky-50/70 text-left transition cursor-pointer">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Practice Tutor Mode (Recommended)</span>
+                <span class="w-4 h-4 rounded-full border-4 border-[#0284c7] bg-white"></span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Checks each answer immediately with a kid-friendly hint &amp; explanation, while still adapting difficulty dynamically.</p>
+            </button>
+
+            <button type="button" onclick="selectMode('standard')" id="mode-btn-standard" class="p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Standard Adaptive Test</span>
+                <span class="w-4 h-4 rounded-full border-2 border-slate-300 bg-white"></span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Simulates real MAP test day—adapts silently after each item and reveals the full RIT &amp; skill report at the end.</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Start Button -->
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">
+          <div class="text-xs text-slate-500">
+            Tools: <strong>Yellow/Pink Highlighter</strong>, <strong>Eliminator (X)</strong>, <strong>Line Reader</strong>, &amp; <strong>Text Size</strong>.
+          </div>
+          <button type="button" onclick="startTest()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-sm sm:text-base shadow-lg shadow-sky-900/20 flex items-center justify-center gap-2 transition cursor-pointer shrink-0">
+            <span>Start Adaptive Practice</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. ACTIVE NWEA MAP TESTING INTERFACE ==================== -->
+  <div id="test-screen" class="hidden flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+    
+    <!-- Top Dark Blue/Slate NWEA MAP Growth Header Bar -->
+    <header class="bg-[#0f172a] text-white border-b border-slate-700 px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md z-30 shrink-0">
+      
+      <!-- Left: Official Title & Question Progress Counter -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-[#0284c7] text-white font-extrabold text-sm flex items-center justify-center shadow-inner">M</span>
+          <div class="leading-tight">
+            <div class="text-xs sm:text-sm font-bold text-white tracking-tight">Math Practice | Math Set 3 Adaptive</div>
+            <div id="header-student-badge" class="text-[11px] text-sky-300 font-medium">Student</div>
+          </div>
+        </div>
+
+        <div class="hidden md:block h-6 w-px bg-slate-700 mx-1"></div>
+
+        <!-- Question Progress Counter Pill -->
+        <div class="flex items-center gap-2.5 bg-slate-800/90 px-3 py-1.5 rounded-full border border-slate-700">
+          <span id="question-counter" class="text-xs font-bold text-sky-200">Question 1 of 10</span>
+          <div class="w-16 sm:w-24 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div id="progress-bar-fill" class="h-full bg-[#38bdf8] transition-all duration-300" style="width: 10%"></div>
+          </div>
+        </div>
+
+        <!-- Live Adaptive Level Pill (shown in Tutor Mode) -->
+        <div id="adaptive-level-pill" class="hidden sm:flex items-center gap-1.5 bg-slate-800/90 px-2.5 py-1 rounded-full border border-slate-700 text-[11px] font-bold text-emerald-300">
+          <span>Level:</span>
+          <span id="adaptive-level-label">Fall Gr. 3 (RIT ~188)</span>
+        </div>
+      </div>
+
+      <!-- Right: Authentic NWEA Student Tools Toolbar -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+        
+        <!-- Yellow & Pink Highlighter Tools -->
+        <div class="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+          <button type="button" id="tool-hl-yellow" onclick="toggleHighlighter('yellow')" title="Yellow Highlighter" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer">
+            <span class="w-3.5 h-3.5 rounded-sm bg-[#fef08a] border border-amber-500 inline-block"></span>
+            <span class="hidden lg:inline">Yellow</span>
+          </button>
+          <button type="button" id="tool-hl-pink" onclick="toggleHighlighter('pink')" title="Pink Highlighter" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer">
+            <span class="w-3.5 h-3.5 rounded-sm bg-[#fbcfe8] border border-pink-500 inline-block"></span>
+            <span class="hidden lg:inline">Pink</span>
+          </button>
+          <button type="button" id="tool-clear-hl" onclick="clearHighlights()" title="Clear Highlights" class="px-2 py-1 rounded-md text-[11px] font-semibold text-slate-400 hover:text-white hover:bg-slate-700 border-l border-slate-700 ml-0.5 transition cursor-pointer">
+            Clear
+          </button>
+        </div>
+
+        <!-- Answer Eliminator Tool -->
+        <button type="button" id="tool-eliminator" onclick="toggleEliminatorMode()" title="Answer Eliminator (Strike through choices)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer">
+          <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span class="hidden sm:inline">Eliminator</span>
+        </button>
+
+        <!-- Line Reader Guide Toggle -->
+        <button type="button" id="tool-linereader" onclick="toggleLineReader()" title="Toggle Line Reader Guide" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer">
+          <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span class="hidden md:inline">Line Reader</span>
+        </button>
+
+        <!-- Text Size Toggle (Small / Medium / Large) -->
+        <div class="flex items-center bg-slate-800 border border-slate-700 rounded-lg p-0.5" title="Text Size">
+          <button type="button" id="size-btn-small" onclick="setTextSize('small')" class="px-2 py-1 rounded-md text-[11px] font-bold text-slate-300 hover:bg-slate-700 transition cursor-pointer">S</button>
+          <button type="button" id="size-btn-medium" onclick="setTextSize('medium')" class="px-2 py-1 rounded-md text-xs font-bold bg-[#0284c7] text-white transition cursor-pointer">M</button>
+          <button type="button" id="size-btn-large" onclick="setTextSize('large')" class="px-2 py-1 rounded-md text-sm font-bold text-slate-300 hover:bg-slate-700 transition cursor-pointer">L</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Active Tool Status Banner -->
+    <div id="tool-banner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-1.5 text-xs text-amber-950 flex items-center justify-center gap-2 shrink-0">
+      <span id="tool-banner-text" class="font-semibold"></span>
+    </div>
+
+    <!-- Main Testing Workspace -->
+    <main id="workspace-container" class="flex-1 flex flex-col md:flex-row overflow-hidden bg-[#eef2f6] p-2.5 sm:p-4 gap-3 sm:gap-4">
+      
+      <!-- LEFT PANE: READING PASSAGE -->
+      <section id="passage-pane" class="md:w-1/2 flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden min-h-[38%] md:min-h-0">
+        <div class="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0">
+          <span id="passage-category-badge" class="text-[11px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-md border border-sky-200">
+            Informational Text
+          </span>
+          <span id="passage-rit-tag" class="text-[11px] text-slate-400 font-medium">Drag across words to highlight</span>
+        </div>
+        <div id="passage-scroll-container" class="flex-1 overflow-y-auto p-5 sm:p-7">
+          <h2 id="passage-title" class="text-base sm:text-lg font-bold text-slate-900 mb-3.5 font-sans"></h2>
+          <div id="passage-body" class="passage-text text-slate-800 space-y-4"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT / CENTERED PANE: QUESTION & A/B/C/D RADIO CARDS -->
+      <section id="question-pane" class="md:w-1/2 flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden flex-1">
+        <!-- Standalone Header Strip -->
+        <div id="standalone-header-bar" class="hidden bg-slate-50 border-b border-slate-200 px-5 py-2.5 flex items-center justify-between shrink-0">
+          <span id="standalone-category-badge" class="text-[11px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-md border border-sky-200">
+            Vocabulary &amp; Word Structure
+          </span>
+          <span class="text-[11px] text-slate-400 font-medium">Standalone Question</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-5 sm:p-7 flex flex-col justify-between">
+          <div>
+            <!-- Optional Standalone Sentence Prompt Box -->
+            <div id="standalone-sentence-box" class="hidden mb-5 p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 passage-text text-slate-900"></div>
+
+            <!-- Question Stem -->
+            <div class="mb-5">
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Read the question and choose the best answer.</div>
+              <h3 id="question-stem" class="font-bold text-slate-900 leading-snug"></h3>
+            </div>
+
+            <!-- A / B / C / D Radio-Button Cards -->
+            <div id="choices-container" class="space-y-3"></div>
+
+            <!-- Practice Tutor Mode Instant Explanation -->
+            <div id="tutor-feedback-box" class="hidden mt-5 p-4 rounded-xl border text-sm"></div>
+          </div>
+
+          <!-- Bottom Bar -->
+          <div class="pt-5 mt-6 border-t border-slate-200 flex items-center justify-between gap-3">
+            <div id="status-prompt-box" class="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+              <span id="selection-status-hint">Select an answer choice to continue.</span>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
+              <!-- Tutor Mode Check Answer Button -->
+              <button type="button" id="check-answer-btn" onclick="checkTutorAnswer()" class="hidden px-4 py-2.5 rounded-xl border-2 border-[#0284c7] text-[#0284c7] hover:bg-sky-50 font-bold text-sm transition cursor-pointer">
+                Check Answer
+              </button>
+
+              <!-- Iconic NWEA Blue Pill Forward Arrow Button -->
+              <button type="button" id="next-question-btn" onclick="handleNextClick()" aria-disabled="true" class="nwea-next-btn is-disabled px-5 py-2.5 rounded-full text-white font-bold text-sm flex items-center gap-2.5" title="Next Question">
+                <span id="next-btn-label">Next</span>
+                <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Movable Horizontal Line Reader Ruler Overlay -->
+  <div id="line-reader-bar" class="hidden" style="top: 230px;"></div>
+
+  <!-- ==================== 3. END-OF-TEST NWEA SCORE REPORT SCREEN ==================== -->
+  <div id="results-screen" class="hidden flex-1 overflow-y-auto bg-[#eef2f6] p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+      
+      <!-- Top NWEA Score Report Banner -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-[#0f172a] via-[#1e3a5f] to-[#0284c7] px-6 py-7 text-white flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-sky-200 mb-2">
+              <span>MAP-Style Practice • Math Set 3 Adaptive Report</span>
+            </div>
+            <h1 id="results-headline" class="text-2xl sm:text-3xl font-extrabold">Great Job!</h1>
+            <p id="results-subtext" class="text-sky-100 text-sm mt-1.5 max-w-xl">This adaptive session adjusted each question to your math level. Check your estimated Fall Grade 3 RIT score and skill breakdown below.</p>
+          </div>
+          <div class="flex gap-3 shrink-0">
+            <div class="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl px-5 py-4 text-center">
+              <div class="text-[11px] uppercase font-bold tracking-wider text-sky-200">Est. RIT Score</div>
+              <div id="results-rit-score" class="text-3xl sm:text-4xl font-extrabold mt-0.5 text-amber-300">191</div>
+              <div id="results-rit-band" class="text-[11px] font-bold text-sky-100 mt-1">Fall Gr. 3 Norm: 188</div>
+            </div>
+            <div class="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl px-5 py-4 text-center">
+              <div class="text-[11px] uppercase font-bold tracking-wider text-sky-200">Accuracy</div>
+              <div id="results-score-fraction" class="text-3xl sm:text-4xl font-extrabold mt-0.5">8 / 10</div>
+              <div id="results-score-percent" class="text-[11px] font-bold text-emerald-300 mt-1">80% Correct</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adaptive Journey Visualizer -->
+        <div class="px-6 py-4 bg-sky-50/70 border-b border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600">How the Test Adapted Question by Question</span>
+            <span class="text-[11px] text-slate-500">Green = Correct (steps up) • Amber = Missed (steps down to build skill)</span>
+          </div>
+          <div id="adaptive-journey-strip" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Skill Breakdown by Category -->
+        <div class="p-6 bg-slate-50 border-b border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Performance by NWEA Goal Area</h2>
+            <button type="button" onclick="resetToStart()" class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-xs sm:text-sm shadow-sm transition cursor-pointer">
+              Practice Another Adaptive Set
+            </button>
+          </div>
+          <div id="category-breakdown-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5"></div>
+        </div>
+      </div>
+
+      <!-- Expandable Question-by-Question Review -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h2 class="text-lg font-bold text-slate-800">Question Review &amp; Answer Explanations</h2>
+          <button type="button" onclick="toggleAllReviews()" id="expand-all-btn" class="text-xs font-bold text-[#0284c7] hover:underline cursor-pointer">
+            Expand All
+          </button>
+        </div>
+        <div id="review-list" class="space-y-3"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ADAPTIVE ENGINE & QUESTION BANK ==================== -->
+  <script>
+    // ===== Picture helpers (simple SVG figures) =====
+    function figArray(rows, cols) {
+      let s = "";
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
+        s += `<circle cx="${30 + c*45}" cy="${25 + r*40}" r="12" fill="#0284c7"/>`;
+      return `<svg viewBox="0 0 ${cols*45 + 15} ${rows*40 + 10}" width="${cols*45 + 15}" height="${rows*40 + 10}" role="img" aria-label="Array of ${rows} rows with ${cols} dots in each row">${s}</svg>`;
+    }
+    function figBar(parts, shaded) {
+      const w = Math.min(60, Math.floor(300 / parts));
+      let s = "";
+      for (let i = 0; i < parts; i++)
+        s += `<rect x="${10 + i*w}" y="10" width="${w}" height="60" fill="${i < shaded ? "#fbbf24" : "#fff"}" stroke="#1e293b" stroke-width="2"/>`;
+      return `<svg viewBox="0 0 ${parts*w + 20} 80" width="${parts*w + 20}" height="80" role="img" aria-label="Bar split into ${parts} equal parts with ${shaded} shaded">${s}</svg>`;
+    }
+    function figNumberLine(parts, at) {
+      const step = 280 / parts;
+      let ticks = "";
+      for (let i = 0; i <= parts; i++)
+        ticks += `<line x1="${20 + i*step}" y1="25" x2="${20 + i*step}" y2="45" stroke="#1e293b" stroke-width="2"/>`;
+      return `<svg viewBox="0 0 320 80" width="320" height="80" role="img" aria-label="Number line from 0 to 1 split into ${parts} equal parts with point P marked">
+        <line x1="20" y1="35" x2="300" y2="35" stroke="#1e293b" stroke-width="2"/>${ticks}
+        <text x="20" y="68" font-size="16" text-anchor="middle" fill="#1e293b">0</text>
+        <text x="300" y="68" font-size="16" text-anchor="middle" fill="#1e293b">1</text>
+        <circle cx="${20 + at*step}" cy="35" r="7" fill="#e11d48"/>
+        <text x="${20 + at*step}" y="17" font-size="16" font-weight="bold" text-anchor="middle" fill="#e11d48">P</text></svg>`;
+    }
+    function figCircleThirds(shaded) {
+      const pts = [[60,10],[103.3,85],[16.7,85]];
+      let s = "";
+      for (let i = 0; i < 3; i++) {
+        const a = pts[i], b = pts[(i+1)%3];
+        s += `<path d="M60,60 L${a[0]},${a[1]} A50,50 0 0,1 ${b[0]},${b[1]} Z" fill="${i < shaded ? "#fbbf24" : "#fff"}" stroke="#1e293b" stroke-width="2"/>`;
+      }
+      return `<svg viewBox="0 0 120 120" width="140" height="140" role="img" aria-label="Circle split into 3 equal parts with ${shaded} shaded">${s}</svg>`;
+    }
+    function figClock(h, m) {
+      let nums = "";
+      for (let n = 1; n <= 12; n++) {
+        const a = (n*30 - 90) * Math.PI / 180;
+        nums += `<text x="${(70 + 48*Math.cos(a)).toFixed(1)}" y="${(75 + 48*Math.sin(a)).toFixed(1)}" font-size="13" text-anchor="middle" fill="#1e293b">${n}</text>`;
+      }
+      const ma = (m*6 - 90) * Math.PI / 180, ha = ((h % 12)*30 + m*0.5 - 90) * Math.PI / 180;
+      return `<svg viewBox="0 0 140 140" width="150" height="150" role="img" aria-label="Analog clock">
+        <circle cx="70" cy="70" r="62" fill="#fff" stroke="#1e293b" stroke-width="3"/>${nums}
+        <line x1="70" y1="70" x2="${(70 + 30*Math.cos(ha)).toFixed(1)}" y2="${(70 + 30*Math.sin(ha)).toFixed(1)}" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+        <line x1="70" y1="70" x2="${(70 + 44*Math.cos(ma)).toFixed(1)}" y2="${(70 + 44*Math.sin(ma)).toFixed(1)}" stroke="#0284c7" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="70" cy="70" r="4" fill="#1e293b"/></svg>`;
+    }
+    function figBarGraph(labels, values, max) {
+      let s = "";
+      for (let v = 0; v <= max; v += 2)
+        s += `<line x1="40" y1="${170 - v*15}" x2="${40 + labels.length*60}" y2="${170 - v*15}" stroke="#cbd5e1"/><text x="32" y="${174 - v*15}" font-size="12" text-anchor="end" fill="#475569">${v}</text>`;
+      labels.forEach((l, i) => {
+        s += `<rect x="${52 + i*60}" y="${170 - values[i]*15}" width="36" height="${values[i]*15}" fill="#0284c7"/>`;
+        s += `<text x="${70 + i*60}" y="188" font-size="13" text-anchor="middle" fill="#1e293b">${l}</text>`;
+      });
+      return `<svg viewBox="0 0 ${60 + labels.length*60} 200" width="${60 + labels.length*60}" height="200" role="img" aria-label="Bar graph">${s}<line x1="40" y1="170" x2="${40 + labels.length*60}" y2="170" stroke="#1e293b" stroke-width="2"/></svg>`;
+    }
+
+    const OA = "Operations & Algebraic Thinking";
+    const NO = "Number & Operations";
+    const MD = "Measurement & Data";
+    const GE = "Geometry";
+
+    // ===== MATH SET 3 — Grade 3 adaptive (original items) =====
+    const QUESTION_BANK = [
+      // TIER 1 (~178)
+      { id: "S3_T1_OA_1", tier: 1, rit: 177, layout: "standalone", category: OA, skillTag: "Subtraction Word Problems",
+        standalonePrompt: "Solve the problem:\nA class has 28 students. 13 of them are boys.",
+        stem: "How many girls are in the class?", choices: ["15", "41", "13", "25"], correctIndex: 0,
+        explanation: "Take the boys away from the whole class: 28 − 13 = 15 girls. Check: 15 + 13 = 28 ✓" },
+      { id: "S3_T1_NO_1", tier: 1, rit: 178, layout: "standalone", category: NO, skillTag: "Comparing Numbers",
+        standalonePrompt: "Look at the numbers:\n512     521     215     251",
+        stem: "Which number is the greatest?", choices: ["512", "521", "215", "251"], correctIndex: 1,
+        explanation: "Compare hundreds first: 512 and 521 both have 5 hundreds. Then compare tens: 2 tens is more than 1 ten, so 521 is greatest." },
+      { id: "S3_T1_MD_1", tier: 1, rit: 177, layout: "standalone", category: MD, skillTag: "Units of Time",
+        standalonePrompt: "Think about time:\nA clock's minute hand goes all the way around once in 1 hour.",
+        stem: "How many minutes are in 1 hour?", choices: ["12", "24", "60", "100"], correctIndex: 2,
+        explanation: "There are 60 minutes in 1 hour. (There are 24 hours in a day, and a clock has 12 numbers.)" },
+      { id: "S3_T1_GE_1", tier: 1, rit: 178, layout: "standalone", category: GE, skillTag: "Naming Shapes",
+        standalonePrompt: "Think about shapes:\nSome shapes have straight sides and some have curved edges.",
+        stem: "Which shape has NO straight sides?", choices: ["Square", "Circle", "Triangle", "Hexagon"], correctIndex: 1,
+        explanation: "A circle has one curved edge and no straight sides. The others all have straight sides." },
+      { id: "S3_T1_NO_2", tier: 1, rit: 180, layout: "standalone", category: NO, skillTag: "10 More / 10 Less",
+        standalonePrompt: "Think about place value:\n395",
+        stem: "What number is 10 more than 395?", choices: ["405", "396", "495", "385"], correctIndex: 0,
+        explanation: "Adding 10 adds 1 to the tens. 9 tens + 1 ten = 10 tens, which makes a new hundred: 395 + 10 = 405." },
+
+      // TIER 2 (~188)
+      { id: "S3_T2_OA_1", tier: 2, rit: 187, layout: "standalone", category: OA, skillTag: "Multiplication Word Problems",
+        standalonePrompt: "Solve the problem:\nEach bike has 2 wheels. There are 9 bikes in the rack.",
+        stem: "How many wheels are there in all?", choices: ["11", "18", "29", "92"], correctIndex: 1,
+        explanation: "9 groups of 2 wheels: 9 × 2 = 18 wheels." },
+      { id: "S3_T2_OA_2", tier: 2, rit: 188, layout: "standalone", category: OA, skillTag: "Meaning of Division",
+        standalonePrompt: "Solve the problem:\n15 apples are shared equally into 3 baskets.",
+        stem: "Which number sentence matches the story?", choices: ["15 ÷ 3 = 5", "15 − 3 = 12", "15 × 3 = 45", "3 ÷ 15 = 5"], correctIndex: 0,
+        explanation: "Sharing equally is division. 15 apples ÷ 3 baskets = 5 apples in each basket." },
+      { id: "S3_T2_NO_1", tier: 2, rit: 189, layout: "standalone", category: NO, skillTag: "Rounding to the Nearest Ten",
+        standalonePrompt: "Look at the number:\n455",
+        stem: "What is 455 rounded to the nearest ten?", choices: ["450", "460", "500", "400"], correctIndex: 1,
+        explanation: "455 is exactly halfway between 450 and 460. When the ones digit is 5, we round up, so 455 → 460." },
+      { id: "S3_T2_NO_2", tier: 2, rit: 188, layout: "standalone", category: NO, skillTag: "Unit Fractions",
+        standalonePrompt: "Solve the problem:\nA pizza is cut into 6 equal slices. Ana eats 1 slice.",
+        stem: "What fraction of the pizza did Ana eat?", choices: ["1/6", "6/1", "1/5", "5/6"], correctIndex: 0,
+        explanation: "She ate 1 of the 6 equal slices, so she ate 1/6. (5/6 is the part that is left.)" },
+      { id: "S3_T2_MD_1", tier: 2, rit: 190, layout: "standalone", category: MD, skillTag: "Elapsed Time (Hours)",
+        standalonePrompt: "Solve the problem:\nSchool starts at 8:20 AM. Lunch is 3 hours later.",
+        stem: "What time is lunch?", choices: ["11:20 AM", "10:20 AM", "11:50 AM", "8:23 AM"], correctIndex: 0,
+        explanation: "Count forward 3 hours: 8:20 → 9:20 → 10:20 → 11:20 AM. The minutes stay the same." },
+      { id: "S3_T2_GE_1", tier: 2, rit: 187, layout: "standalone", category: GE, skillTag: "Naming Polygons",
+        standalonePrompt: "Think about shapes:\nA shape has 5 straight sides and 5 corners.",
+        stem: "What is the name of the shape?", choices: ["Pentagon", "Hexagon", "Octagon", "Quadrilateral"], correctIndex: 0,
+        explanation: "A pentagon has 5 sides. A hexagon has 6, an octagon has 8, and a quadrilateral has 4." },
+
+      // TIER 3 (~197)
+      { id: "S3_T3_OA_1", tier: 3, rit: 196, layout: "standalone", category: OA, skillTag: "Multiplication Facts",
+        standalonePrompt: "Solve:\n7 × 8 = ?",
+        stem: "What is 7 × 8?", choices: ["54", "56", "63", "15"], correctIndex: 1,
+        explanation: "7 × 8 = 56. A trick: 5, 6, 7, 8 → 56 = 7 × 8. Or: 7 × 4 = 28, and double it: 28 + 28 = 56." },
+      { id: "S3_T3_OA_2", tier: 3, rit: 197, layout: "standalone", category: OA, skillTag: "Division Word Problems",
+        standalonePrompt: "Solve the problem:\nMs. Lee has 35 crayons. She puts 5 crayons in each cup.",
+        stem: "How many cups does she use?", choices: ["7", "30", "40", "6"], correctIndex: 0,
+        explanation: "35 ÷ 5 = 7 cups. Check: 7 × 5 = 35 ✓" },
+      { id: "S3_T3_NO_1", tier: 3, rit: 198, layout: "standalone", category: NO, skillTag: "Fractions on a Number Line",
+        standalonePrompt: "Look at the number line:", figure: figNumberLine(3, 2),
+        stem: "What fraction does point P show?", choices: ["1/3", "2/3", "3/2", "2/4"], correctIndex: 1,
+        explanation: "The space from 0 to 1 is split into 3 equal parts. P is 2 parts from 0, so P is at 2/3." },
+      { id: "S3_T3_NO_2", tier: 3, rit: 197, layout: "standalone", category: NO, skillTag: "Comparing to One Half",
+        standalonePrompt: "Think about fractions:\n1/2 means one of two equal parts.",
+        stem: "Which fraction is LESS than 1/2?", choices: ["1/4", "3/4", "2/3", "4/4"], correctIndex: 0,
+        explanation: "1/4 is one of four equal parts, which is smaller than half. 3/4, 2/3 and 4/4 are all more than half." },
+      { id: "S3_T3_MD_1", tier: 3, rit: 196, layout: "standalone", category: MD, skillTag: "Area vs. Perimeter",
+        standalonePrompt: "Solve the problem:\nA rug is 4 feet long and 6 feet wide.",
+        stem: "What is the AREA of the rug?", choices: ["10 square feet", "20 square feet", "24 square feet", "46 square feet"], correctIndex: 2,
+        explanation: "Area = length × width = 4 × 6 = 24 square feet. (20 feet is the perimeter, the distance around.)" },
+      { id: "S3_T3_GE_1", tier: 3, rit: 198, layout: "standalone", category: GE, skillTag: "Partitioning Shapes",
+        standalonePrompt: "Think about shapes:\nYou want to split a square to show fourths.",
+        stem: "Into how many equal parts should you split it?", choices: ["2", "3", "4", "8"], correctIndex: 2,
+        explanation: "Fourths means 4 equal parts. Each part is 1/4 of the square." },
+
+      // TIER 4 (~206)
+      { id: "S3_T4_OA_1", tier: 4, rit: 205, layout: "standalone", category: OA, skillTag: "Two-Step Word Problems",
+        standalonePrompt: "Solve the problem:\nThere are 6 tables with 4 kids at each table. Then 5 more kids join the class.",
+        stem: "How many kids are there now?", choices: ["29", "30", "15", "24"], correctIndex: 0,
+        explanation: "Step 1: 6 × 4 = 24 kids at the tables. Step 2: 24 + 5 = 29 kids." },
+      { id: "S3_T4_OA_2", tier: 4, rit: 206, layout: "standalone", category: OA, skillTag: "Equal Products",
+        standalonePrompt: "Find the missing number:\n8 × 3 = 4 × ☐",
+        stem: "What number makes the equation true?", choices: ["6", "24", "12", "7"], correctIndex: 0,
+        explanation: "8 × 3 = 24. So 4 × ☐ must also equal 24. Since 4 × 6 = 24, the missing number is 6." },
+      { id: "S3_T4_NO_1", tier: 4, rit: 206, layout: "standalone", category: NO, skillTag: "Equivalent Fractions",
+        standalonePrompt: "Think about fractions:\n2/3 of a chocolate bar",
+        stem: "Which fraction is equal to 2/3?", choices: ["4/6", "2/6", "3/2", "4/3"], correctIndex: 0,
+        explanation: "If you cut each third into 2 equal pieces, there are 6 pieces in all and 2/3 becomes 4 of them. So 2/3 = 4/6." },
+      { id: "S3_T4_MD_1", tier: 4, rit: 205, layout: "standalone", category: MD, skillTag: "Elapsed Time (Hours & Minutes)",
+        standalonePrompt: "Solve the problem:\nSoccer practice started at 4:45 PM and ended at 6:10 PM.",
+        stem: "How long was practice?", choices: ["1 hour 25 minutes", "1 hour 35 minutes", "2 hours 25 minutes", "1 hour 65 minutes"], correctIndex: 0,
+        explanation: "4:45 → 5:45 is 1 hour. 5:45 → 6:00 is 15 minutes, and 6:00 → 6:10 is 10 more. 1 hour + 25 minutes." },
+      { id: "S3_T4_MD_2", tier: 4, rit: 207, layout: "standalone", category: MD, skillTag: "Perimeter: Missing Side",
+        standalonePrompt: "Solve the problem:\nA rectangle has a perimeter of 20 centimeters. One side is 6 centimeters long.",
+        stem: "How long is the shorter side?", choices: ["4 cm", "14 cm", "8 cm", "2 cm"], correctIndex: 0,
+        explanation: "A rectangle has two 6 cm sides: 6 + 6 = 12. That leaves 20 − 12 = 8 cm for the other two equal sides, so each is 8 ÷ 2 = 4 cm." },
+      { id: "S3_T4_GE_1", tier: 4, rit: 207, layout: "standalone", category: GE, skillTag: "Classifying Quadrilaterals",
+        standalonePrompt: "Think about shapes:\nA shape has 4 equal sides and 4 right angles.",
+        stem: "Which names describe this shape?", choices: ["Square only", "Square, rectangle, and rhombus", "Rectangle only", "Trapezoid only"], correctIndex: 1,
+        explanation: "It is a square. It is also a rectangle (4 right angles) and a rhombus (4 equal sides). One shape can have more than one name!" }
+    ];
+
+    // ==================== ADAPTIVE ENGINE STATE ====================
+    const TOTAL_QUESTIONS = 10;
+    let testMode = "tutor"; // "tutor" | "standard"
+    let currentStep = 0; // 0 to 9
+    let currentTier = 2; // Start right at On-Target Fall Grade 3 (Tier 2, RIT ~188)
+    let usedQuestionIds = new Set();
+    let sessionHistory = []; // [{ question, chosenIndex, isCorrect, tierAtTime }]
+    let currentQuestion = null;
+    let selectedChoiceIndex = null;
+    let eliminatedSet = new Set();
+    let passageHTMLCache = "";
+    let activeHighlighter = null;
+    let eliminatorActive = false;
+    let lineReaderActive = false;
+    let textSize = "medium";
+    let tutorChecked = false;
+    let allReviewsExpanded = false;
+
+    const LETTERS = ["A", "B", "C", "D"];
+    const TIER_LABELS = {
+      1: "Early Fall Gr. 3 (RIT ~178)",
+      2: "Fall Gr. 3 Norm (RIT ~188)",
+      3: "Proficient Gr. 3 (RIT ~197)",
+      4: "Challenge Gr. 3+ (RIT ~205)"
+    };
+
+    // ==================== 1. START SCREEN HANDLERS ====================
+    function selectMode(mode) {
+      testMode = mode;
+      const stdBtn = document.getElementById("mode-btn-standard");
+      const tutBtn = document.getElementById("mode-btn-tutor");
+
+      if (mode === "tutor") {
+        tutBtn.className = "p-4 rounded-xl border-2 border-[#0284c7] bg-sky-50/70 text-left transition cursor-pointer";
+        tutBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-4 border-[#0284c7] bg-white";
+        stdBtn.className = "p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer";
+        stdBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-2 border-slate-300 bg-white";
+      } else {
+        stdBtn.className = "p-4 rounded-xl border-2 border-[#0284c7] bg-sky-50/70 text-left transition cursor-pointer";
+        stdBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-4 border-[#0284c7] bg-white";
+        tutBtn.className = "p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer";
+        tutBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-2 border-slate-300 bg-white";
+      }
+    }
+
+    function pickNextAdaptiveQuestion() {
+      // Balance across the 4 math goal areas while matching currentTier
+      const categoryCounts = {
+        [OA]: 0, [NO]: 0, [MD]: 0, [GE]: 0
+      };
+      sessionHistory.forEach(item => {
+        if (categoryCounts[item.question.category] !== undefined) {
+          categoryCounts[item.question.category]++;
+        }
+      });
+
+      // Find unused questions at the target tier
+      let candidates = QUESTION_BANK.filter(q => q.tier === currentTier && !usedQuestionIds.has(q.id));
+
+      // Fallback to nearest tier if exhausted
+      if (candidates.length === 0) {
+        candidates = QUESTION_BANK
+          .filter(q => !usedQuestionIds.has(q.id))
+          .sort((a, b) => Math.abs(a.tier - currentTier) - Math.abs(b.tier - currentTier));
+      }
+
+      // Prefer the least-tested category so all 4 goal areas get balanced coverage
+      candidates.sort((a, b) => {
+        const diffTier = Math.abs(a.tier - currentTier) - Math.abs(b.tier - currentTier);
+        if (diffTier !== 0) return diffTier;
+        return (categoryCounts[a.category] || 0) - (categoryCounts[b.category] || 0);
+      });
+
+      const chosen = candidates[0];
+      usedQuestionIds.add(chosen.id);
+      return chosen;
+    }
+
+    function startTest() {
+      const nameVal = document.getElementById("student-name-input").value.trim() || "Reader";
+      document.getElementById("header-student-badge").textContent = `Student: ${nameVal}`;
+
+      currentStep = 0;
+      currentTier = 2; // Always begin at Fall 3rd Grade Norm (RIT ~188)
+      usedQuestionIds = new Set();
+      sessionHistory = [];
+      activeHighlighter = null;
+      eliminatorActive = false;
+      lineReaderActive = false;
+      tutorChecked = false;
+
+      // Show live level badge in Tutor mode; hide in Standard mode for authentic test feel
+      const levelPill = document.getElementById("adaptive-level-pill");
+      if (testMode === "tutor") {
+        levelPill.classList.remove("hidden");
+      } else {
+        levelPill.classList.add("hidden");
+      }
+
+      updateToolbarUI();
+      document.getElementById("line-reader-bar").classList.add("hidden");
+
+      document.getElementById("start-screen").classList.add("hidden");
+      document.getElementById("results-screen").classList.add("hidden");
+      document.getElementById("test-screen").classList.remove("hidden");
+
+      loadNextQuestion();
+    }
+
+    function loadNextQuestion() {
+      currentQuestion = pickNextAdaptiveQuestion();
+      selectedChoiceIndex = null;
+      eliminatedSet = new Set();
+      passageHTMLCache = "";
+      tutorChecked = false;
+
+      // Update Header Progress & Live Level Badge
+      document.getElementById("question-counter").textContent = `Question ${currentStep + 1} of ${TOTAL_QUESTIONS}`;
+      document.getElementById("progress-bar-fill").style.width = `${((currentStep + 1) / TOTAL_QUESTIONS) * 100}%`;
+      document.getElementById("adaptive-level-label").textContent = TIER_LABELS[currentQuestion.tier];
+
+      const passagePane = document.getElementById("passage-pane");
+      const questionPane = document.getElementById("question-pane");
+      const standaloneHeader = document.getElementById("standalone-header-bar");
+      const standaloneSentenceBox = document.getElementById("standalone-sentence-box");
+
+      if (currentQuestion.layout === "split") {
+        passagePane.classList.remove("hidden");
+        questionPane.className = "md:w-1/2 flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden flex-1";
+        standaloneHeader.classList.add("hidden");
+        standaloneSentenceBox.classList.add("hidden");
+
+        document.getElementById("passage-category-badge").textContent = currentQuestion.category;
+        document.getElementById("passage-title").textContent = currentQuestion.passageTitle;
+
+        const passageBody = document.getElementById("passage-body");
+        if (currentQuestion.isPoem) {
+          passageBody.innerHTML = currentQuestion.passageParagraphs
+            .map(stanza => `<p class="poem-stanza whitespace-pre-line pl-3 border-l-2 border-sky-200">${stanza}</p>`)
+            .join("");
+        } else {
+          passageBody.innerHTML = currentQuestion.passageParagraphs.map(p => `<p>${p}</p>`).join("");
+        }
+        passageHTMLCache = passageBody.innerHTML;
+        document.getElementById("passage-scroll-container").scrollTop = 0;
+      } else {
+        passagePane.classList.add("hidden");
+        questionPane.className = "w-full max-w-3xl mx-auto flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden flex-1";
+        standaloneHeader.classList.remove("hidden");
+        document.getElementById("standalone-category-badge").textContent = `${currentQuestion.category} • ${currentQuestion.skillTag}`;
+
+        standaloneSentenceBox.classList.remove("hidden");
+        standaloneSentenceBox.innerHTML = currentQuestion.standalonePrompt
+          .split("\n")
+          .map((line, i) => i === 0
+            ? `<div class="text-xs font-sans font-bold uppercase tracking-wider text-slate-400 mb-1.5">${line}</div>`
+            : `<p class="text-slate-900 font-normal leading-relaxed">${line}</p>`)
+          .join("") + (currentQuestion.figure ? `<div class="mt-3 flex justify-center">${currentQuestion.figure}</div>` : "");
+        passageHTMLCache = standaloneSentenceBox.innerHTML;
+      }
+
+      document.getElementById("question-stem").textContent = currentQuestion.stem;
+      renderChoices();
+
+      const feedbackBox = document.getElementById("tutor-feedback-box");
+      feedbackBox.classList.add("hidden");
+      feedbackBox.innerHTML = "";
+
+      updateBottomControls();
+      applyTextSize();
+    }
+
+    // ==================== 2. CHOICES & ADAPTIVE STEPPING ====================
+    function renderChoices() {
+      const container = document.getElementById("choices-container");
+      container.innerHTML = "";
+
+      currentQuestion.choices.forEach((choiceText, idx) => {
+        const isSelected = selectedChoiceIndex === idx;
+        const isEliminated = eliminatedSet.has(idx);
+
+        let cardBorderStyle = "border-slate-300 bg-white hover:border-[#0284c7]/70 hover:bg-slate-50";
+        if (tutorChecked) {
+          if (idx === currentQuestion.correctIndex) {
+            cardBorderStyle = "border-emerald-500 bg-emerald-50/80 ring-2 ring-emerald-500/25";
+          } else if (isSelected && idx !== currentQuestion.correctIndex) {
+            cardBorderStyle = "border-rose-500 bg-rose-50/80";
+          }
+        } else if (isSelected) {
+          cardBorderStyle = "border-[#0284c7] bg-sky-50/80 ring-2 ring-[#0284c7]/25";
+        }
+
+        const card = document.createElement("div");
+        card.className = `group relative flex items-center justify-between p-3.5 sm:p-4 rounded-xl border-2 transition cursor-pointer ${cardBorderStyle} ${isEliminated ? "choice-eliminated" : ""}`;
+        card.onclick = () => handleChoiceSelect(idx);
+
+        card.innerHTML = `
+          <div class="flex items-start gap-3.5 pr-4">
+            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 transition ${
+              isSelected
+                ? "border-[#0284c7] bg-[#0284c7] text-white shadow-xs"
+                : "border-slate-400 text-slate-700 bg-white group-hover:border-[#0284c7]"
+            }">
+              ${LETTERS[idx]}
+            </div>
+            <span class="choice-text text-slate-800 font-medium leading-snug">${choiceText}</span>
+          </div>
+
+          <button
+            type="button"
+            onclick="toggleEliminateChoice(event, ${idx})"
+            title="${isEliminated ? "Restore option" : "Eliminate option"}"
+            class="shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition cursor-pointer ${
+              isEliminated
+                ? "bg-rose-100 border-rose-300 text-rose-600"
+                : eliminatorActive
+                  ? "bg-amber-100 border-amber-400 text-slate-700 hover:bg-rose-100 hover:text-rose-600"
+                  : "bg-slate-50 border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-300"
+            }"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function handleChoiceSelect(idx) {
+      if (tutorChecked) return;
+
+      if (eliminatorActive) {
+        toggleEliminateChoice(null, idx);
+        return;
+      }
+
+      if (eliminatedSet.has(idx)) {
+        eliminatedSet.delete(idx);
+      }
+
+      selectedChoiceIndex = idx;
+      renderChoices();
+      updateBottomControls();
+    }
+
+    function toggleEliminateChoice(event, idx) {
+      if (event) event.stopPropagation();
+      if (tutorChecked) return;
+
+      if (eliminatedSet.has(idx)) {
+        eliminatedSet.delete(idx);
+      } else {
+        eliminatedSet.add(idx);
+        if (selectedChoiceIndex === idx) {
+          selectedChoiceIndex = null;
+        }
+      }
+
+      renderChoices();
+      updateBottomControls();
+    }
+
+    function updateBottomControls() {
+      const hasAnswer = selectedChoiceIndex !== null;
+      const nextBtn = document.getElementById("next-question-btn");
+      const checkBtn = document.getElementById("check-answer-btn");
+      const hint = document.getElementById("selection-status-hint");
+      const isLast = currentStep === TOTAL_QUESTIONS - 1;
+
+      document.getElementById("next-btn-label").textContent = isLast ? "Finish" : "Next";
+      hint.className = "text-slate-500";
+
+      if (testMode === "tutor") {
+        if (!tutorChecked) {
+          checkBtn.classList.remove("hidden");
+          checkBtn.disabled = !hasAnswer;
+          checkBtn.classList.toggle("opacity-40", !hasAnswer);
+          nextBtn.classList.add("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "true");
+          hint.textContent = hasAnswer
+            ? "Click 'Check Answer' to see how you did!"
+            : "Choose an answer (A, B, C, or D) first.";
+        } else {
+          checkBtn.classList.add("hidden");
+          nextBtn.classList.remove("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "false");
+          hint.textContent = isLast
+            ? "All done! Click Finish to see your Math Report."
+            : "Click Next—the next question will adjust automatically!";
+        }
+      } else {
+        checkBtn.classList.add("hidden");
+        if (hasAnswer) {
+          nextBtn.classList.remove("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "false");
+          hint.textContent = isLast
+            ? "Ready! Click Finish to see your NWEA Score Report."
+            : "Answer recorded. Click Next to continue.";
+        } else {
+          nextBtn.classList.add("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "true");
+          hint.textContent = "Select an answer choice to continue.";
+        }
+      }
+    }
+
+    function checkTutorAnswer() {
+      if (selectedChoiceIndex === null) return;
+      tutorChecked = true;
+      const isCorrect = selectedChoiceIndex === currentQuestion.correctIndex;
+
+      renderChoices();
+      updateBottomControls();
+
+      // Calculate what the next adaptive tier will be so the student sees the live adaptation
+      const nextTierPreview = isCorrect
+        ? Math.min(4, currentTier + 1)
+        : Math.max(1, currentTier - 1);
+
+      const feedbackBox = document.getElementById("tutor-feedback-box");
+      feedbackBox.classList.remove("hidden");
+
+      if (isCorrect) {
+        feedbackBox.className = "mt-5 p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-950 text-sm";
+        feedbackBox.innerHTML = `
+          <div class="font-bold text-emerald-800 mb-1">✅ Great job! Stepping up to ${TIER_LABELS[nextTierPreview]}</div>
+          <p>${currentQuestion.explanation}</p>
+        `;
+      } else {
+        feedbackBox.className = "mt-5 p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-950 text-sm";
+        feedbackBox.innerHTML = `
+          <div class="font-bold text-amber-900 mb-1">💡 Good try! The best answer is ${LETTERS[currentQuestion.correctIndex]}. Adjusting to ${TIER_LABELS[nextTierPreview]}</div>
+          <p>${currentQuestion.explanation}</p>
+        `;
+      }
+    }
+
+    function handleNextClick() {
+      const hasAnswer = selectedChoiceIndex !== null;
+
+      if (!hasAnswer || (testMode === "tutor" && !tutorChecked)) {
+        const promptBox = document.getElementById("status-prompt-box");
+        const hint = document.getElementById("selection-status-hint");
+        hint.textContent = !hasAnswer
+          ? "⚠️ Please choose A, B, C, or D before clicking Next!"
+          : "⚠️ Please click 'Check Answer' first to see how you did!";
+        hint.className = "text-amber-700 font-bold";
+
+        promptBox.classList.remove("shake-prompt");
+        void promptBox.offsetWidth;
+        promptBox.classList.add("shake-prompt");
+        return;
+      }
+
+      const isCorrect = selectedChoiceIndex === currentQuestion.correctIndex;
+      sessionHistory.push({
+        question: currentQuestion,
+        chosenIndex: selectedChoiceIndex,
+        isCorrect,
+        tierAtTime: currentTier
+      });
+
+      // Dynamic NWEA-style difficulty adjustment
+      if (isCorrect) {
+        currentTier = Math.min(4, currentTier + 1);
+      } else {
+        currentTier = Math.max(1, currentTier - 1);
+      }
+
+      if (currentStep < TOTAL_QUESTIONS - 1) {
+        currentStep++;
+        loadNextQuestion();
+      } else {
+        showResultsScreen();
+      }
+    }
+
+    // ==================== 3. STUDENT TOOLS TOOLBAR ====================
+    function toggleHighlighter(color) {
+      if (activeHighlighter === color) {
+        activeHighlighter = null;
+      } else {
+        activeHighlighter = color;
+        eliminatorActive = false;
+      }
+      updateToolbarUI();
+    }
+
+    function toggleEliminatorMode() {
+      eliminatorActive = !eliminatorActive;
+      if (eliminatorActive) {
+        activeHighlighter = null;
+      }
+      updateToolbarUI();
+      renderChoices();
+    }
+
+    function toggleLineReader() {
+      lineReaderActive = !lineReaderActive;
+      document.getElementById("line-reader-bar").classList.toggle("hidden", !lineReaderActive);
+      updateToolbarUI();
+    }
+
+    function setTextSize(size) {
+      textSize = size;
+      ["small", "medium", "large"].forEach(s => {
+        const btn = document.getElementById(`size-btn-${s}`);
+        btn.className = s === size
+          ? "px-2 py-1 rounded-md text-xs font-bold bg-[#0284c7] text-white transition cursor-pointer"
+          : "px-2 py-1 rounded-md text-xs font-bold text-slate-300 hover:bg-slate-700 transition cursor-pointer";
+      });
+      applyTextSize();
+    }
+
+    function applyTextSize() {
+      const passageBody = document.getElementById("passage-body");
+      const standaloneBox = document.getElementById("standalone-sentence-box");
+      const stem = document.getElementById("question-stem");
+      const choiceTexts = document.querySelectorAll(".choice-text");
+
+      const mapSizes = {
+        small: { passage: "15px", stem: "16px", choice: "14px" },
+        medium: { passage: "17px", stem: "18px", choice: "16px" },
+        large: { passage: "20px", stem: "21px", choice: "18px" }
+      };
+
+      const chosen = mapSizes[textSize];
+      if (passageBody) passageBody.style.fontSize = chosen.passage;
+      if (standaloneBox) standaloneBox.style.fontSize = chosen.passage;
+      if (stem) stem.style.fontSize = chosen.stem;
+      choiceTexts.forEach(el => (el.style.fontSize = chosen.choice));
+    }
+
+    function updateToolbarUI() {
+      const yBtn = document.getElementById("tool-hl-yellow");
+      const pBtn = document.getElementById("tool-hl-pink");
+      const elBtn = document.getElementById("tool-eliminator");
+      const lrBtn = document.getElementById("tool-linereader");
+      const banner = document.getElementById("tool-banner");
+      const bannerText = document.getElementById("tool-banner-text");
+
+      yBtn.className = activeHighlighter === "yellow"
+        ? "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold bg-amber-400 text-slate-950 transition cursor-pointer"
+        : "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer";
+
+      pBtn.className = activeHighlighter === "pink"
+        ? "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold bg-pink-400 text-slate-950 transition cursor-pointer"
+        : "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer";
+
+      elBtn.className = eliminatorActive
+        ? "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-rose-400 bg-rose-500/25 text-rose-200 text-xs font-bold transition cursor-pointer"
+        : "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer";
+
+      lrBtn.className = lineReaderActive
+        ? "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-sky-400 bg-sky-500/25 text-sky-200 text-xs font-bold transition cursor-pointer"
+        : "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer";
+
+      document.body.classList.remove("highlighter-yellow-active", "highlighter-pink-active");
+      if (activeHighlighter === "yellow") document.body.classList.add("highlighter-yellow-active");
+      if (activeHighlighter === "pink") document.body.classList.add("highlighter-pink-active");
+
+      if (activeHighlighter) {
+        banner.classList.remove("hidden");
+        bannerText.textContent = `🖍️ ${activeHighlighter === "yellow" ? "Yellow" : "Pink"} Highlighter Active: Drag across any text in the passage to highlight key clues.`;
+      } else if (eliminatorActive) {
+        banner.classList.remove("hidden");
+        bannerText.textContent = "❌ Answer Eliminator Active: Click any option (or its 'X' button) to cross out choices you know are wrong.";
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    document.addEventListener("mouseup", handlePassageTextHighlight);
+    document.addEventListener("touchend", handlePassageTextHighlight);
+
+    function handlePassageTextHighlight() {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed || !currentQuestion) return;
+
+      const targetContainer = currentQuestion.layout === "split"
+        ? document.getElementById("passage-body")
+        : document.getElementById("standalone-sentence-box");
+
+      if (!targetContainer || !targetContainer.contains(selection.anchorNode) || !targetContainer.contains(selection.focusNode)) {
+        return;
+      }
+
+      try {
+        const range = selection.getRangeAt(0);
+        if (range.toString().trim().length === 0) return;
+
+        const span = document.createElement("span");
+        span.className = activeHighlighter === "pink" ? "map-highlight-pink" : "map-highlight-yellow";
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        selection.removeAllRanges();
+      } catch (err) {
+        selection.removeAllRanges();
+      }
+    }
+
+    function clearHighlights() {
+      if (!currentQuestion) return;
+      if (currentQuestion.layout === "split") {
+        const passageBody = document.getElementById("passage-body");
+        if (currentQuestion.isPoem) {
+          passageBody.innerHTML = currentQuestion.passageParagraphs
+            .map(stanza => `<p class="poem-stanza whitespace-pre-line pl-3 border-l-2 border-sky-200">${stanza}</p>`)
+            .join("");
+        } else {
+          passageBody.innerHTML = currentQuestion.passageParagraphs.map(p => `<p>${p}</p>`).join("");
+        }
+      } else {
+        const standaloneBox = document.getElementById("standalone-sentence-box");
+        standaloneBox.innerHTML = currentQuestion.standalonePrompt
+          .split("\n")
+          .map((line, i) => i === 0
+            ? `<div class="text-xs font-sans font-bold uppercase tracking-wider text-slate-400 mb-1.5">${line}</div>`
+            : `<p class="text-slate-900 font-normal leading-relaxed">${line}</p>`)
+          .join("") + (currentQuestion.figure ? `<div class="mt-3 flex justify-center">${currentQuestion.figure}</div>` : "");
+      }
+      applyTextSize();
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      if (!lineReaderActive) return;
+      const workspace = document.getElementById("workspace-container").getBoundingClientRect();
+      const clampedTop = Math.min(Math.max(workspace.top, e.clientY - 19), workspace.bottom - 38);
+      document.getElementById("line-reader-bar").style.top = `${clampedTop}px`;
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (!lineReaderActive || !e.touches[0]) return;
+      const workspace = document.getElementById("workspace-container").getBoundingClientRect();
+      const clampedTop = Math.min(Math.max(workspace.top, e.touches[0].clientY - 19), workspace.bottom - 38);
+      document.getElementById("line-reader-bar").style.top = `${clampedTop}px`;
+    }, { passive: true });
+
+    // ==================== 4. END-OF-TEST NWEA SCORE REPORT ====================
+    function showResultsScreen() {
+      lineReaderActive = false;
+      document.getElementById("line-reader-bar").classList.add("hidden");
+      document.getElementById("test-screen").classList.add("hidden");
+      document.getElementById("results-screen").classList.remove("hidden");
+
+      const studentName = document.getElementById("student-name-input").value.trim() || "Reader";
+      const total = sessionHistory.length;
+      let correctCount = 0;
+
+      // Estimate RIT score from the second half of the adaptive test (when difficulty has converged)
+      const secondHalf = sessionHistory.slice(4);
+      let ritSum = 0;
+      secondHalf.forEach(item => {
+        ritSum += item.question.rit + (item.isCorrect ? 3 : -3);
+      });
+      const estimatedRIT = Math.round(ritSum / secondHalf.length);
+
+      const categories = {
+        [OA]: { correct: 0, total: 0 },
+        [NO]: { correct: 0, total: 0 },
+        [MD]: { correct: 0, total: 0 },
+        [GE]: { correct: 0, total: 0 }
+      };
+
+      sessionHistory.forEach(item => {
+        if (item.isCorrect) correctCount++;
+        const cat = item.question.category;
+        if (categories[cat]) {
+          categories[cat].total++;
+          if (item.isCorrect) categories[cat].correct++;
+        }
+      });
+
+      const pct = Math.round((correctCount / total) * 100);
+      document.getElementById("results-headline").textContent =
+        estimatedRIT >= 195
+          ? `Outstanding Work, ${studentName}!`
+          : estimatedRIT >= 186
+            ? `Right On Grade Level, ${studentName}!`
+            : `Great Practice, ${studentName}!`;
+
+      document.getElementById("results-rit-score").textContent = estimatedRIT;
+      document.getElementById("results-rit-band").textContent =
+        estimatedRIT >= 188 ? "At/Above Fall Gr. 3 Norm (188)" : "Fall Gr. 3 Norm: 188";
+
+      document.getElementById("results-score-fraction").textContent = `${correctCount} / ${total}`;
+      document.getElementById("results-score-percent").textContent = `${pct}% Accuracy`;
+
+      // Adaptive Journey Pills
+      const journeyStrip = document.getElementById("adaptive-journey-strip");
+      journeyStrip.innerHTML = sessionHistory.map((item, idx) => `
+        <div class="px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 ${
+          item.isCorrect
+            ? "bg-emerald-100 border-emerald-300 text-emerald-900"
+            : "bg-amber-100 border-amber-300 text-amber-900"
+        }">
+          <span>Q${idx + 1}</span>
+          <span class="opacity-75">• RIT ${item.question.rit}</span>
+          <span>${item.isCorrect ? "✓" : "✗"}</span>
+        </div>
+      `).join("");
+
+      // Render Category Breakdown Cards
+      const breakdownGrid = document.getElementById("category-breakdown-grid");
+      breakdownGrid.innerHTML = Object.entries(categories).map(([catName, stats]) => {
+        const catPct = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+        const strong = stats.total > 0 && stats.correct === stats.total;
+        return `
+          <div class="bg-white rounded-xl border ${strong ? "border-emerald-200" : "border-slate-200"} p-4 shadow-2xs">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-800">${catName}</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded-md ${strong ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"}">
+                ${stats.correct}/${stats.total}
+              </span>
+            </div>
+            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mt-3">
+              <div class="h-full ${strong ? "bg-emerald-500" : "bg-[#0284c7]"} rounded-full" style="width: ${catPct}%"></div>
+            </div>
+            <div class="text-[11px] text-slate-500 font-medium mt-1.5">
+              ${strong ? "★ Strong Goal Area" : "Great area to review below"}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Render Expandable Question-by-Question Review
+      allReviewsExpanded = false;
+      document.getElementById("expand-all-btn").textContent = "Expand All";
+      const reviewList = document.getElementById("review-list");
+
+      reviewList.innerHTML = sessionHistory.map((item, idx) => {
+        const q = item.question;
+        const chosen = item.chosenIndex;
+        const isCorrect = item.isCorrect;
+
+        return `
+          <div class="bg-white rounded-xl border ${isCorrect ? "border-emerald-200" : "border-amber-300"} shadow-2xs overflow-hidden">
+            <button type="button" onclick="toggleReviewItem(${idx})" class="w-full px-5 py-4 flex items-center justify-between gap-3 text-left hover:bg-slate-50/80 transition cursor-pointer">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center shrink-0 ${
+                  isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
+                }">
+                  Q${idx + 1}
+                </span>
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold uppercase tracking-wider text-[#0284c7]">${q.category} • ${q.skillTag} (RIT ${q.rit})</div>
+                  <div class="text-sm font-bold text-slate-900 truncate">${q.stem}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
+                  isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
+                }">
+                  ${isCorrect ? "✓ Correct" : "✗ Review"}
+                </span>
+                <svg id="chevron-${idx}" class="w-4 h-4 text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+
+            <div id="review-body-${idx}" class="hidden px-5 pb-5 pt-2 border-t border-slate-100 space-y-3 bg-slate-50/50">
+              <p class="text-sm font-bold text-slate-900">${q.stem}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm">
+                <div class="p-3 rounded-xl border ${isCorrect ? "bg-emerald-50 border-emerald-200 text-emerald-950" : "bg-rose-50 border-rose-200 text-rose-950"}">
+                  <div class="text-[10px] font-extrabold uppercase tracking-wider opacity-75">Your Answer</div>
+                  <div class="font-semibold mt-0.5">${chosen !== null ? `${LETTERS[chosen]}. ${q.choices[chosen]}` : "No answer selected"}</div>
+                </div>
+                <div class="p-3 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-950">
+                  <div class="text-[10px] font-extrabold uppercase tracking-wider opacity-75">Correct Answer</div>
+                  <div class="font-semibold mt-0.5">${LETTERS[q.correctIndex]}. ${q.choices[q.correctIndex]}</div>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-700">
+                <span class="font-bold text-slate-900">Explanation: </span>${q.explanation}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleReviewItem(idx) {
+      const body = document.getElementById(`review-body-${idx}`);
+      const chev = document.getElementById(`chevron-${idx}`);
+      const isHidden = body.classList.contains("hidden");
+      body.classList.toggle("hidden", !isHidden);
+      chev.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+    }
+
+    function toggleAllReviews() {
+      allReviewsExpanded = !allReviewsExpanded;
+      document.getElementById("expand-all-btn").textContent = allReviewsExpanded ? "Collapse All" : "Expand All";
+      sessionHistory.forEach((_, idx) => {
+        const body = document.getElementById(`review-body-${idx}`);
+        const chev = document.getElementById(`chevron-${idx}`);
+        body.classList.toggle("hidden", !allReviewsExpanded);
+        chev.style.transform = allReviewsExpanded ? "rotate(180deg)" : "rotate(0deg)";
+      });
+    }
+
+    function resetToStart() {
+      document.getElementById("results-screen").classList.add("hidden");
+      document.getElementById("test-screen").classList.add("hidden");
+      document.getElementById("start-screen").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
