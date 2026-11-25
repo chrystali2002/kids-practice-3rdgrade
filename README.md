@@ -2,7 +2,7 @@
 
 Free, MAP-style practice for Grades 2–5. It runs entirely in the browser: no sign-in, no server, and no data collected.
 
-**Live site:** `https://<your-github-username>.github.io/kids-practice/`
+**Live site:** `https://github.com/chrystali2002/kids-practice-3rdgrade/`
 
 ## What's inside
 
