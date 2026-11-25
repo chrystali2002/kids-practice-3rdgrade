@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Challenge Round | Kids Practice Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #eef2f6;
+      color: #1e293b;
+      user-select: none;
+    }
+
+    /* Authentic NWEA Reading Passage Typography */
+    .passage-text {
+      font-family: 'Merriweather', Georgia, serif;
+      line-height: 1.85;
+      user-select: text;
+    }
+
+    .poem-stanza {
+      font-family: 'Merriweather', Georgia, serif;
+      line-height: 2.0;
+      user-select: text;
+    }
+
+    /* Highlight Colors (Yellow & Pink) */
+    .map-highlight-yellow {
+      background-color: #fef08a;
+      color: #1e293b;
+      border-radius: 3px;
+      padding: 1px 0;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    .map-highlight-pink {
+      background-color: #fbcfe8;
+      color: #1e293b;
+      border-radius: 3px;
+      padding: 1px 0;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    /* Custom Cursor when Highlighter is Active */
+    .highlighter-yellow-active .passage-text,
+    .highlighter-yellow-active .poem-stanza {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23eab308' stroke='%231e293b' stroke-width='1.5'><path d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'/></svg>") 0 24, text;
+    }
+
+    .highlighter-pink-active .passage-text,
+    .highlighter-pink-active .poem-stanza {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23ec4899' stroke='%231e293b' stroke-width='1.5'><path d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'/></svg>") 0 24, text;
+    }
+
+    /* Eliminated (Strike-Through) Answer Choice Styling */
+    .choice-eliminated {
+      opacity: 0.52;
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    .choice-eliminated .choice-text {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      text-decoration-color: #ef4444;
+      color: #64748b;
+    }
+
+    /* Iconic NWEA Blue Forward Arrow Button */
+    .nwea-next-btn {
+      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+      box-shadow: 0 4px 12px rgba(3, 105, 161, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.16s ease;
+    }
+    .nwea-next-btn:hover:not(.is-disabled) {
+      background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(3, 105, 161, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .nwea-next-btn:active:not(.is-disabled) {
+      transform: translateY(0);
+    }
+    .nwea-next-btn.is-disabled {
+      background: #cbd5e1;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Gentle Shake Animation for Early Click Warning */
+    @keyframes gentleShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .shake-prompt {
+      animation: gentleShake 0.35s ease-in-out;
+    }
+
+    /* Movable Line Reader Guide Overlay */
+    #line-reader-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: rgba(254, 249, 195, 0.28);
+      border-top: 2px solid #0284c7;
+      border-bottom: 2px solid #0284c7;
+      pointer-events: none;
+      z-index: 40;
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.14);
+      transition: top 0.04s linear;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- ==================== 1. NWEA LOGIN / START SCREEN ==================== -->
+  <div id="start-screen" class="relative flex-1 flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-[#0f172a] via-[#1e3a5f] to-[#005a9e]">
+    <a href="../index.html" class="absolute top-4 left-4 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-sm font-bold border border-white/25">&larr; Home</a>
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      
+      <!-- Top NWEA-style Brand Banner -->
+      <div class="bg-[#0f172a] text-white px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#0284c7] flex items-center justify-center text-white font-extrabold text-lg shadow-md">
+            M
+          </div>
+          <div>
+            <div class="text-[11px] font-bold uppercase tracking-widest text-sky-300">MAP-Style Reading Practice (not affiliated with NWEA)</div>
+            <h1 class="text-base sm:text-lg font-bold text-white">Reading 2–5 • Set 2: Challenge Round</h1>
+          </div>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+          Level 2 • Grade 3
+        </span>
+      </div>
+
+      <!-- Login & Configuration Content -->
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 text-sm text-slate-700 flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#0284c7] text-white flex items-center justify-center shrink-0 font-bold text-base mt-0.5">
+            ★
+          </div>
+          <div>
+            <p class="font-bold text-slate-900">Ready for Set 2: Challenge Round!</p>
+            <p class="text-slate-600 mt-0.5">You aced Set 1! This 8-question round steps up to advanced 3rd-grade passages—including <strong>Informational Text</strong>, <strong>Literary Inference</strong>, <strong>Poetry &amp; Figurative Language</strong>, and <strong>Word Prefixes</strong>.</p>
+          </div>
+        </div>
+
+        <!-- Student Name & Session Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Student Name</label>
+            <input id="student-name-input" type="text" value="" placeholder="Type your first name" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-[#0284c7] focus:bg-white transition" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Assigned Test</label>
+            <div class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-700 font-semibold flex items-center justify-between">
+              <span>Reading 2–5 (Set 2)</span>
+              <span class="text-xs font-bold text-[#0284c7] bg-sky-100 px-2 py-0.5 rounded-md">8 Questions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Selector -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Choose Testing Mode</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <button type="button" onclick="selectMode('standard')" id="mode-btn-standard" class="p-4 rounded-xl border-2 border-[#0284c7] bg-sky-50/70 text-left transition cursor-pointer">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Standard Test Mode</span>
+                <span class="w-4 h-4 rounded-full border-4 border-[#0284c7] bg-white"></span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Simulates real MAP test day. Shows your full score report and detailed explanations at the end.</p>
+            </button>
+
+            <button type="button" onclick="selectMode('tutor')" id="mode-btn-tutor" class="p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 text-sm">Practice Tutor Mode</span>
+                <span class="w-4 h-4 rounded-full border-2 border-slate-300 bg-white"></span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Checks each answer immediately and explains why the correct choice works best.</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Start Button -->
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">
+          <div class="text-xs text-slate-500">
+            Tools included: <strong>Yellow/Pink Highlighter</strong>, <strong>Eliminator (X)</strong>, <strong>Line Reader</strong>, &amp; <strong>Text Size</strong>.
+          </div>
+          <button type="button" onclick="startTest()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-sm sm:text-base shadow-lg shadow-sky-900/20 flex items-center justify-center gap-2 transition cursor-pointer shrink-0">
+            <span>Begin Challenge Round</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. ACTIVE NWEA MAP TESTING INTERFACE ==================== -->
+  <div id="test-screen" class="hidden flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+    
+    <!-- Top Dark Blue/Slate NWEA MAP Growth Header Bar -->
+    <header class="bg-[#0f172a] text-white border-b border-slate-700 px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md z-30 shrink-0">
+      
+      <!-- Left: Official Title & Question Progress Counter -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-[#0284c7] text-white font-extrabold text-sm flex items-center justify-center shadow-inner">M</span>
+          <div class="leading-tight">
+            <div class="text-xs sm:text-sm font-bold text-white tracking-tight">Reading Practice | Set 2: Challenge Round</div>
+            <div id="header-student-badge" class="text-[11px] text-sky-300 font-medium">Student</div>
+          </div>
+        </div>
+
+        <div class="hidden md:block h-6 w-px bg-slate-700 mx-1"></div>
+
+        <!-- Question Progress Counter Pill -->
+        <div class="flex items-center gap-2.5 bg-slate-800/90 px-3 py-1.5 rounded-full border border-slate-700">
+          <span id="question-counter" class="text-xs font-bold text-sky-200">Question 1 of 8</span>
+          <div class="w-16 sm:w-24 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div id="progress-bar-fill" class="h-full bg-[#38bdf8] transition-all duration-300" style="width: 12.5%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Authentic NWEA Student Tools Toolbar -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+        
+        <!-- Yellow & Pink Highlighter Tools -->
+        <div class="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+          <button type="button" id="tool-hl-yellow" onclick="toggleHighlighter('yellow')" title="Yellow Highlighter" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer">
+            <span class="w-3.5 h-3.5 rounded-sm bg-[#fef08a] border border-amber-500 inline-block"></span>
+            <span class="hidden lg:inline">Yellow</span>
+          </button>
+          <button type="button" id="tool-hl-pink" onclick="toggleHighlighter('pink')" title="Pink Highlighter" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer">
+            <span class="w-3.5 h-3.5 rounded-sm bg-[#fbcfe8] border border-pink-500 inline-block"></span>
+            <span class="hidden lg:inline">Pink</span>
+          </button>
+          <button type="button" id="tool-clear-hl" onclick="clearHighlights()" title="Clear Highlights" class="px-2 py-1 rounded-md text-[11px] font-semibold text-slate-400 hover:text-white hover:bg-slate-700 border-l border-slate-700 ml-0.5 transition cursor-pointer">
+            Clear
+          </button>
+        </div>
+
+        <!-- Answer Eliminator Tool -->
+        <button type="button" id="tool-eliminator" onclick="toggleEliminatorMode()" title="Answer Eliminator (Strike through choices)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer">
+          <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span class="hidden sm:inline">Eliminator</span>
+        </button>
+
+        <!-- Line Reader Guide Toggle -->
+        <button type="button" id="tool-linereader" onclick="toggleLineReader()" title="Toggle Line Reader Guide" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer">
+          <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span class="hidden md:inline">Line Reader</span>
+        </button>
+
+        <!-- Text Size Toggle (Small / Medium / Large) -->
+        <div class="flex items-center bg-slate-800 border border-slate-700 rounded-lg p-0.5" title="Text Size">
+          <button type="button" id="size-btn-small" onclick="setTextSize('small')" class="px-2 py-1 rounded-md text-[11px] font-bold text-slate-300 hover:bg-slate-700 transition cursor-pointer">S</button>
+          <button type="button" id="size-btn-medium" onclick="setTextSize('medium')" class="px-2 py-1 rounded-md text-xs font-bold bg-[#0284c7] text-white transition cursor-pointer">M</button>
+          <button type="button" id="size-btn-large" onclick="setTextSize('large')" class="px-2 py-1 rounded-md text-sm font-bold text-slate-300 hover:bg-slate-700 transition cursor-pointer">L</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Active Tool Status Banner -->
+    <div id="tool-banner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-1.5 text-xs text-amber-950 flex items-center justify-center gap-2 shrink-0">
+      <span id="tool-banner-text" class="font-semibold"></span>
+    </div>
+
+    <!-- Main Testing Workspace -->
+    <main id="workspace-container" class="flex-1 flex flex-col lg:flex-row overflow-hidden bg-[#eef2f6] p-2.5 sm:p-4 gap-3 sm:gap-4">
+      
+      <!-- LEFT PANE: READING PASSAGE (Hidden automatically on standalone vocabulary questions) -->
+      <section id="passage-pane" class="lg:w-1/2 flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden min-h-[38%] lg:min-h-0">
+        <div class="bg-slate-50 border-b border-slate-200 px-4 py-2 flex items-center justify-between shrink-0">
+          <span id="passage-category-badge" class="text-[11px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-md border border-sky-200">
+            Informational Text
+          </span>
+          <span class="text-[11px] text-slate-400 font-medium">Drag across words to highlight</span>
+        </div>
+        <div id="passage-scroll-container" class="flex-1 overflow-y-auto p-5 sm:p-7">
+          <h2 id="passage-title" class="text-base sm:text-lg font-bold text-slate-900 mb-3.5 font-sans"></h2>
+          <div id="passage-body" class="passage-text text-slate-800 space-y-4"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT / CENTERED PANE: QUESTION & A/B/C/D RADIO CARDS -->
+      <section id="question-pane" class="lg:w-1/2 flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden flex-1">
+        <!-- Standalone Header Strip (Shown only when passage pane is hidden) -->
+        <div id="standalone-header-bar" class="hidden bg-slate-50 border-b border-slate-200 px-5 py-2.5 flex items-center justify-between shrink-0">
+          <span id="standalone-category-badge" class="text-[11px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-md border border-sky-200">
+            Vocabulary &amp; Word Structure
+          </span>
+          <span class="text-[11px] text-slate-400 font-medium">Standalone Question</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-5 sm:p-7 flex flex-col justify-between">
+          <div>
+            <!-- Optional Standalone Sentence Prompt Box -->
+            <div id="standalone-sentence-box" class="hidden mb-5 p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 passage-text text-slate-900"></div>
+
+            <!-- Question Stem -->
+            <div class="mb-5">
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Read the question and choose the best answer.</div>
+              <h3 id="question-stem" class="font-bold text-slate-900 leading-snug"></h3>
+            </div>
+
+            <!-- A / B / C / D Radio-Button Cards -->
+            <div id="choices-container" class="space-y-3"></div>
+
+            <!-- Practice Tutor Mode Instant Explanation -->
+            <div id="tutor-feedback-box" class="hidden mt-5 p-4 rounded-xl border text-sm"></div>
+          </div>
+
+          <!-- Bottom Bar with Gentle Warning Prompt & Iconic NWEA Blue Next Arrow -->
+          <div class="pt-5 mt-6 border-t border-slate-200 flex items-center justify-between gap-3">
+            <div id="status-prompt-box" class="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+              <span id="selection-status-hint">Select an answer choice to continue.</span>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
+              <!-- Tutor Mode Check Answer Button -->
+              <button type="button" id="check-answer-btn" onclick="checkTutorAnswer()" class="hidden px-4 py-2.5 rounded-xl border-2 border-[#0284c7] text-[#0284c7] hover:bg-sky-50 font-bold text-sm transition cursor-pointer">
+                Check Answer
+              </button>
+
+              <!-- Iconic NWEA Blue Pill Forward Arrow Button -->
+              <button type="button" id="next-question-btn" onclick="handleNextClick()" aria-disabled="true" class="nwea-next-btn is-disabled px-5 py-2.5 rounded-full text-white font-bold text-sm flex items-center gap-2.5" title="Next Question">
+                <span id="next-btn-label">Next</span>
+                <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Movable Horizontal Line Reader Ruler Overlay -->
+  <div id="line-reader-bar" class="hidden" style="top: 230px;"></div>
+
+  <!-- ==================== 3. END-OF-TEST NWEA SCORE REPORT SCREEN ==================== -->
+  <div id="results-screen" class="hidden flex-1 overflow-y-auto bg-[#eef2f6] p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+      
+      <!-- Top NWEA Score Report Banner -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-[#0f172a] via-[#1e3a5f] to-[#0284c7] px-6 py-7 text-white flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-sky-200 mb-2">
+              <span>MAP-Style Practice • Set 2 Score Report</span>
+            </div>
+            <h1 id="results-headline" class="text-2xl sm:text-3xl font-extrabold">Awesome Effort!</h1>
+            <p id="results-subtext" class="text-sky-100 text-sm mt-1.5 max-w-xl">You completed the Grade 3 Challenge Round! Review your category breakdown and explanations below.</p>
+          </div>
+          <div class="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl px-7 py-4 text-center shrink-0">
+            <div class="text-[11px] uppercase font-bold tracking-wider text-sky-200">Total Score</div>
+            <div id="results-score-fraction" class="text-4xl font-extrabold mt-0.5">8 / 8</div>
+            <div id="results-score-percent" class="text-xs font-bold text-amber-300 mt-1">100% Accuracy</div>
+          </div>
+        </div>
+
+        <!-- Skill Breakdown by Category -->
+        <div class="p-6 bg-slate-50 border-b border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Performance by Reading Category</h2>
+            <button type="button" onclick="resetToStart()" class="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-xs sm:text-sm shadow-sm transition cursor-pointer">
+              Take Challenge Round Again
+            </button>
+          </div>
+          <div id="category-breakdown-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3.5"></div>
+        </div>
+      </div>
+
+      <!-- Expandable Question-by-Question Review -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h2 class="text-lg font-bold text-slate-800">Question Review &amp; Answer Explanations</h2>
+          <button type="button" onclick="toggleAllReviews()" id="expand-all-btn" class="text-xs font-bold text-[#0284c7] hover:underline cursor-pointer">
+            Expand All
+          </button>
+        </div>
+        <div id="review-list" class="space-y-3"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    // Brand-New Set of 8 Advanced 3rd-Grade Questions (Set 2: Challenge Round)
+    const CHALLENGE_QUESTIONS = [
+      {
+        id: 1,
+        layout: "split",
+        category: "Informational Text",
+        skillTag: "Author's Purpose & Structure",
+        passageTitle: "The Great Monarch Migration",
+        passageParagraphs: [
+          "Every autumn, millions of bright orange-and-black monarch butterflies begin an extraordinary journey across North America. Traveling up to 3,000 miles, they fly south from Canada and the northern United States to spend the winter in the cool mountain forests of central Mexico.",
+          "Scientists have discovered that monarchs rely on a built-in 'sun compass' and rising currents of warm air called thermals to glide long distances without wasting energy. Remarkably, no single butterfly ever completes the entire round trip. The monarchs that fly south in the fall live for several months through the winter, then begin heading north in spring to lay eggs. Their children and grandchildren continue the journey northward, taking three to four generations to return to the northern meadows each summer."
+        ],
+        stem: "Why does the author mention that no single butterfly completes the entire round trip?",
+        choices: [
+          "To show that butterflies fly too slowly to reach Mexico",
+          "To explain that multiple generations work together over the year to complete the full migration cycle",
+          "To prove that monarchs get lost during spring storms",
+          "To show that Mexico is too warm for butterflies in summer"
+        ],
+        correctIndex: 1,
+        explanation: "Paragraph 2 explains that the fall butterflies lay eggs in spring, and 'their children and grandchildren continue the journey northward,' showing how several generations complete the full yearly cycle together."
+      },
+      {
+        id: 2,
+        layout: "split",
+        category: "Informational Text",
+        skillTag: "Key Details & Comprehension",
+        passageTitle: "The Great Monarch Migration",
+        passageParagraphs: [
+          "Every autumn, millions of bright orange-and-black monarch butterflies begin an extraordinary journey across North America. Traveling up to 3,000 miles, they fly south from Canada and the northern United States to spend the winter in the cool mountain forests of central Mexico.",
+          "Scientists have discovered that monarchs rely on a built-in 'sun compass' and rising currents of warm air called thermals to glide long distances without wasting energy. Remarkably, no single butterfly ever completes the entire round trip. The monarchs that fly south in the fall live for several months through the winter, then begin heading north in spring to lay eggs. Their children and grandchildren continue the journey northward, taking three to four generations to return to the northern meadows each summer."
+        ],
+        stem: "How do monarch butterflies find their way south in the autumn?",
+        choices: [
+          "By following rivers and highways",
+          "By flying only at night under the stars",
+          "By using air currents and the position of the sun",
+          "By following older butterflies that made the trip before"
+        ],
+        correctIndex: 2,
+        explanation: "The second paragraph states that monarchs rely on a built-in 'sun compass' and rising currents of warm air (thermals) to travel south."
+      },
+      {
+        id: 3,
+        layout: "split",
+        category: "Literary Text",
+        skillTag: "Plot & Evidence",
+        passageTitle: "The Community Garden Mystery",
+        passageParagraphs: [
+          "Every morning for a week, Leo walked out to his family's plot at the Oak Street Community Garden only to find that the ripest cherry tomatoes had vanished overnight. Strangely, the low wire fence around their garden bed was completely undamaged, and the latch on the wooden gate was still tightly fastened.",
+          "Leo felt tempted to ask his next-door garden neighbor, Mrs. Gable, if she had picked them by mistake. Instead, he knelt down to inspect the damp soil around the vines. Near the base of the tomato cage, Leo spotted tiny, five-toed footprints shaped almost like miniature human hands.",
+          "Leo grinned as he solved the mystery. A clever raccoon had been climbing right over the wire fence after dark! That afternoon, Leo shared his discovery with Mrs. Gable, and the two of them worked together to build a lightweight mesh cover to protect both of their tomato plants."
+        ],
+        stem: "What clue helped Leo figure out what was taking the tomatoes?",
+        choices: [
+          "A hole chewed through the wire fence",
+          "Tiny hand-shaped footprints in the soft soil",
+          "Tomato seeds left on Mrs. Gable's porch",
+          "Scratch marks at the top of the wooden gate"
+        ],
+        correctIndex: 1,
+        explanation: "In paragraph 2, Leo kneels to check the damp soil and spots 'tiny, five-toed footprints shaped almost like miniature human hands,' which belong to a raccoon."
+      },
+      {
+        id: 4,
+        layout: "split",
+        category: "Literary Text",
+        skillTag: "Character Inference",
+        passageTitle: "The Community Garden Mystery",
+        passageParagraphs: [
+          "Every morning for a week, Leo walked out to his family's plot at the Oak Street Community Garden only to find that the ripest cherry tomatoes had vanished overnight. Strangely, the low wire fence around their garden bed was completely undamaged, and the latch on the wooden gate was still tightly fastened.",
+          "Leo felt tempted to ask his next-door garden neighbor, Mrs. Gable, if she had picked them by mistake. Instead, he knelt down to inspect the damp soil around the vines. Near the base of the tomato cage, Leo spotted tiny, five-toed footprints shaped almost like miniature human hands.",
+          "Leo grinned as he solved the mystery. A clever raccoon had been climbing right over the wire fence after dark! That afternoon, Leo shared his discovery with Mrs. Gable, and the two of them worked together to build a lightweight mesh cover to protect both of their tomato plants."
+        ],
+        stem: "Which word best describes Leo based on his actions in the story?",
+        choices: [
+          "Impatient",
+          "Careless",
+          "Observant",
+          "Boastful"
+        ],
+        correctIndex: 2,
+        explanation: "Rather than jumping to conclusions, Leo carefully examines the fence, gate latch, and damp soil for clues—showing he is observant."
+      },
+      {
+        id: 5,
+        layout: "split",
+        category: "Literary Text",
+        skillTag: "Poetry & Figurative Language",
+        isPoem: true,
+        passageTitle: "The First Snowfall",
+        passageParagraphs: [
+          "A silver blanket softly falls\nAcross the sleeping street,\nAnd wraps the rooftops, trees, and walls\nIn quiet, chilly sheets.",
+          "The oak tree wears a frozen crown,\nIts branches dipped in white,\nWhile footprints trace the silent town\nBeneath the morning light."
+        ],
+        stem: "What does the poet mean by the line \"The oak tree wears a frozen crown\"?",
+        choices: [
+          "Someone placed a toy crown on a tree branch",
+          "Ice and snow are resting on top of the tree's branches",
+          "The oak tree is the tallest tree in the forest",
+          "The leaves on the oak tree turned bright yellow"
+        ],
+        correctIndex: 1,
+        explanation: "The poet uses a metaphor comparing the snow and ice resting atop the oak tree's white branches to a gleaming frozen crown."
+      },
+      {
+        id: 6,
+        layout: "split",
+        category: "Informational Text",
+        skillTag: "Cause & Effect / Main Idea",
+        passageTitle: "How Honeybees Communicate",
+        passageParagraphs: [
+          "Inside a busy beehive, thousands of honeybees work together to gather food. When a scout bee discovers a patch of flowers rich with sweet nectar, she flies back to the dark hive and performs a special figure-eight movement called the 'waggle dance.'",
+          "Other worker bees gather closely around the dancer and feel the vibrations of her wings. The angle of her dance on the honeycomb tells the bees which direction to fly compared to the sun. Even more amazing, the length of time she spends waggling tells her hive mates exactly how far away the flowers are located."
+        ],
+        stem: "According to the passage, what does the length of a bee's waggle dance tell the other bees?",
+        choices: [
+          "What color the flowers are",
+          "How many predators are nearby",
+          "How far away the flowers are located",
+          "When it is going to rain"
+        ],
+        correctIndex: 2,
+        explanation: "The last sentence of paragraph 2 directly states that 'the length of time she spends waggling tells her hive mates exactly how far away the flowers are located.'"
+      },
+      {
+        id: 7,
+        layout: "standalone",
+        category: "Vocabulary & Word Structure",
+        skillTag: "Prefixes (in-)",
+        standalonePrompt: "Read the sentence:\n\"Because the directions on the box were incomplete, Mia had to guess how the final two pieces fit together.\"",
+        stem: "What does the prefix \"in-\" in the word \"incomplete\" mean?",
+        choices: [
+          "Again",
+          "Not",
+          "Before",
+          "Under"
+        ],
+        correctIndex: 1,
+        explanation: "The prefix 'in-' means 'not.' When combined with 'complete,' 'incomplete' means not finished or missing parts—which is why Mia had to guess how the final pieces fit."
+      },
+      {
+        id: 8,
+        layout: "standalone",
+        category: "Vocabulary & Word Structure",
+        skillTag: "Context Clues (Inference)",
+        standalonePrompt: "Read the sentence:\n\"Even though the hike up the mountain was arduous, the view of the sparkling lake from the summit made every steep step worthwhile.\"",
+        stem: "Based on the sentence, what does the word \"arduous\" mean?",
+        choices: [
+          "Very difficult and tiring",
+          "Short and flat",
+          "Dangerous and icy",
+          "Quiet and peaceful"
+        ],
+        correctIndex: 0,
+        explanation: "The contrast phrase 'Even though' and the clue 'made every steep step worthwhile' show that the climb was challenging, hard work—meaning very difficult and tiring."
+      }
+    ];
+
+    // Application State
+    let testMode = "standard"; // "standard" | "tutor"
+    let currentIndex = 0;
+    let userAnswers = new Array(CHALLENGE_QUESTIONS.length).fill(null);
+    let eliminatedMap = {}; // { qIndex: Set([0, 2]) }
+    let passageHTMLCache = {};
+    let activeHighlighter = null; // null | "yellow" | "pink"
+    let eliminatorActive = false;
+    let lineReaderActive = false;
+    let textSize = "medium"; // "small" | "medium" | "large"
+    let tutorChecked = false;
+    let allReviewsExpanded = false;
+
+    const LETTERS = ["A", "B", "C", "D"];
+
+    // ==================== 1. START SCREEN HANDLERS ====================
+    function selectMode(mode) {
+      testMode = mode;
+      const stdBtn = document.getElementById("mode-btn-standard");
+      const tutBtn = document.getElementById("mode-btn-tutor");
+
+      if (mode === "standard") {
+        stdBtn.className = "p-4 rounded-xl border-2 border-[#0284c7] bg-sky-50/70 text-left transition cursor-pointer";
+        stdBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-4 border-[#0284c7] bg-white";
+        tutBtn.className = "p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer";
+        tutBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-2 border-slate-300 bg-white";
+      } else {
+        tutBtn.className = "p-4 rounded-xl border-2 border-[#0284c7] bg-sky-50/70 text-left transition cursor-pointer";
+        tutBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-4 border-[#0284c7] bg-white";
+        stdBtn.className = "p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer";
+        stdBtn.querySelector("span:last-child").className = "w-4 h-4 rounded-full border-2 border-slate-300 bg-white";
+      }
+    }
+
+    function startTest() {
+      const nameVal = document.getElementById("student-name-input").value.trim() || "Reader";
+      document.getElementById("header-student-badge").textContent = `Student: ${nameVal}`;
+
+      currentIndex = 0;
+      userAnswers = new Array(CHALLENGE_QUESTIONS.length).fill(null);
+      eliminatedMap = {};
+      passageHTMLCache = {};
+      activeHighlighter = null;
+      eliminatorActive = false;
+      lineReaderActive = false;
+      tutorChecked = false;
+
+      updateToolbarUI();
+      document.getElementById("line-reader-bar").classList.add("hidden");
+
+      document.getElementById("start-screen").classList.add("hidden");
+      document.getElementById("results-screen").classList.add("hidden");
+      document.getElementById("test-screen").classList.remove("hidden");
+
+      renderQuestion();
+    }
+
+    // ==================== 2. QUESTION RENDERING ====================
+    function renderQuestion() {
+      const q = CHALLENGE_QUESTIONS[currentIndex];
+      const total = CHALLENGE_QUESTIONS.length;
+      tutorChecked = false;
+
+      // Header Progress
+      document.getElementById("question-counter").textContent = `Question ${currentIndex + 1} of ${total}`;
+      document.getElementById("progress-bar-fill").style.width = `${((currentIndex + 1) / total) * 100}%`;
+
+      const passagePane = document.getElementById("passage-pane");
+      const questionPane = document.getElementById("question-pane");
+      const standaloneHeader = document.getElementById("standalone-header-bar");
+      const standaloneSentenceBox = document.getElementById("standalone-sentence-box");
+
+      if (q.layout === "split") {
+        // Split-Screen Layout
+        passagePane.classList.remove("hidden");
+        questionPane.className = "lg:w-1/2 flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden flex-1";
+        standaloneHeader.classList.add("hidden");
+        standaloneSentenceBox.classList.add("hidden");
+
+        document.getElementById("passage-category-badge").textContent = q.category;
+        document.getElementById("passage-title").textContent = q.passageTitle;
+
+        const passageBody = document.getElementById("passage-body");
+        if (passageHTMLCache[currentIndex]) {
+          passageBody.innerHTML = passageHTMLCache[currentIndex];
+        } else if (q.isPoem) {
+          passageBody.innerHTML = q.passageParagraphs
+            .map(stanza => `<p class="poem-stanza whitespace-pre-line pl-3 border-l-2 border-sky-200">${stanza}</p>`)
+            .join("");
+        } else {
+          passageBody.innerHTML = q.passageParagraphs.map(p => `<p>${p}</p>`).join("");
+        }
+        document.getElementById("passage-scroll-container").scrollTop = 0;
+      } else {
+        // Centered Single-Pane Layout for Standalone Vocabulary Questions
+        passagePane.classList.add("hidden");
+        questionPane.className = "w-full max-w-3xl mx-auto flex flex-col bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden flex-1";
+        standaloneHeader.classList.remove("hidden");
+        document.getElementById("standalone-category-badge").textContent = `${q.category} • ${q.skillTag}`;
+
+        standaloneSentenceBox.classList.remove("hidden");
+        if (passageHTMLCache[currentIndex]) {
+          standaloneSentenceBox.innerHTML = passageHTMLCache[currentIndex];
+        } else {
+          standaloneSentenceBox.innerHTML = q.standalonePrompt
+            .split("\n")
+            .map((line, i) => i === 0
+              ? `<div class="text-xs font-sans font-bold uppercase tracking-wider text-slate-400 mb-1.5">${line}</div>`
+              : `<p class="text-slate-900 font-normal leading-relaxed">${line}</p>`)
+            .join("");
+        }
+      }
+
+      // Render Question Stem & Radio Cards
+      document.getElementById("question-stem").textContent = q.stem;
+      renderChoices();
+
+      // Hide Tutor Feedback Box
+      const feedbackBox = document.getElementById("tutor-feedback-box");
+      feedbackBox.classList.add("hidden");
+      feedbackBox.innerHTML = "";
+
+      updateBottomControls();
+      applyTextSize();
+    }
+
+    function renderChoices() {
+      const q = CHALLENGE_QUESTIONS[currentIndex];
+      const container = document.getElementById("choices-container");
+      const selectedIdx = userAnswers[currentIndex];
+      const eliminatedSet = eliminatedMap[currentIndex] || new Set();
+
+      container.innerHTML = "";
+
+      q.choices.forEach((choiceText, idx) => {
+        const isSelected = selectedIdx === idx;
+        const isEliminated = eliminatedSet.has(idx);
+
+        let cardBorderStyle = "border-slate-300 bg-white hover:border-[#0284c7]/70 hover:bg-slate-50";
+        if (tutorChecked) {
+          if (idx === q.correctIndex) {
+            cardBorderStyle = "border-emerald-500 bg-emerald-50/80 ring-2 ring-emerald-500/25";
+          } else if (isSelected && idx !== q.correctIndex) {
+            cardBorderStyle = "border-rose-500 bg-rose-50/80";
+          }
+        } else if (isSelected) {
+          cardBorderStyle = "border-[#0284c7] bg-sky-50/80 ring-2 ring-[#0284c7]/25";
+        }
+
+        const card = document.createElement("div");
+        card.className = `group relative flex items-center justify-between p-3.5 sm:p-4 rounded-xl border-2 transition cursor-pointer ${cardBorderStyle} ${isEliminated ? "choice-eliminated" : ""}`;
+        card.onclick = () => handleChoiceSelect(idx);
+
+        card.innerHTML = `
+          <div class="flex items-start gap-3.5 pr-4">
+            <!-- NWEA Radio-Style Letter Circle -->
+            <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 transition ${
+              isSelected
+                ? "border-[#0284c7] bg-[#0284c7] text-white shadow-xs"
+                : "border-slate-400 text-slate-700 bg-white group-hover:border-[#0284c7]"
+            }">
+              ${LETTERS[idx]}
+            </div>
+            <span class="choice-text text-slate-800 font-medium leading-snug">${choiceText}</span>
+          </div>
+
+          <!-- Eliminator 'X' Button -->
+          <button
+            type="button"
+            onclick="toggleEliminateChoice(event, ${idx})"
+            title="${isEliminated ? "Restore option" : "Eliminate option"}"
+            class="shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition cursor-pointer ${
+              isEliminated
+                ? "bg-rose-100 border-rose-300 text-rose-600"
+                : eliminatorActive
+                  ? "bg-amber-100 border-amber-400 text-slate-700 hover:bg-rose-100 hover:text-rose-600"
+                  : "bg-slate-50 border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-300"
+            }"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function handleChoiceSelect(idx) {
+      if (tutorChecked) return;
+
+      if (eliminatorActive) {
+        toggleEliminateChoice(null, idx);
+        return;
+      }
+
+      if (eliminatedMap[currentIndex] && eliminatedMap[currentIndex].has(idx)) {
+        eliminatedMap[currentIndex].delete(idx);
+      }
+
+      userAnswers[currentIndex] = idx;
+      renderChoices();
+      updateBottomControls();
+    }
+
+    function toggleEliminateChoice(event, idx) {
+      if (event) event.stopPropagation();
+      if (tutorChecked) return;
+
+      if (!eliminatedMap[currentIndex]) {
+        eliminatedMap[currentIndex] = new Set();
+      }
+
+      if (eliminatedMap[currentIndex].has(idx)) {
+        eliminatedMap[currentIndex].delete(idx);
+      } else {
+        eliminatedMap[currentIndex].add(idx);
+        if (userAnswers[currentIndex] === idx) {
+          userAnswers[currentIndex] = null;
+        }
+      }
+
+      renderChoices();
+      updateBottomControls();
+    }
+
+    function updateBottomControls() {
+      const hasAnswer = userAnswers[currentIndex] !== null;
+      const nextBtn = document.getElementById("next-question-btn");
+      const checkBtn = document.getElementById("check-answer-btn");
+      const hint = document.getElementById("selection-status-hint");
+      const isLast = currentIndex === CHALLENGE_QUESTIONS.length - 1;
+
+      document.getElementById("next-btn-label").textContent = isLast ? "Finish" : "Next";
+      hint.className = "text-slate-500";
+
+      if (testMode === "tutor") {
+        if (!tutorChecked) {
+          checkBtn.classList.remove("hidden");
+          checkBtn.disabled = !hasAnswer;
+          checkBtn.classList.toggle("opacity-40", !hasAnswer);
+          nextBtn.classList.add("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "true");
+          hint.textContent = hasAnswer
+            ? "Click 'Check Answer' to see your explanation."
+            : "Choose an answer (A, B, C, or D) first.";
+        } else {
+          checkBtn.classList.add("hidden");
+          nextBtn.classList.remove("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "false");
+          hint.textContent = isLast
+            ? "All done! Click Finish to view your Score Report."
+            : "Click the blue Next arrow to continue.";
+        }
+      } else {
+        checkBtn.classList.add("hidden");
+        if (hasAnswer) {
+          nextBtn.classList.remove("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "false");
+          hint.textContent = isLast
+            ? "Ready! Click Finish to see your NWEA Score Report."
+            : "Answer recorded. Click Next to continue.";
+        } else {
+          nextBtn.classList.add("is-disabled");
+          nextBtn.setAttribute("aria-disabled", "true");
+          hint.textContent = "Select an answer choice to continue.";
+        }
+      }
+    }
+
+    function checkTutorAnswer() {
+      if (userAnswers[currentIndex] === null) return;
+      tutorChecked = true;
+      const q = CHALLENGE_QUESTIONS[currentIndex];
+      const isCorrect = userAnswers[currentIndex] === q.correctIndex;
+
+      renderChoices();
+      updateBottomControls();
+
+      const feedbackBox = document.getElementById("tutor-feedback-box");
+      feedbackBox.classList.remove("hidden");
+
+      if (isCorrect) {
+        feedbackBox.className = "mt-5 p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-950 text-sm";
+        feedbackBox.innerHTML = `<div class="font-bold text-emerald-800 mb-1">✅ Spot on! Great reading!</div><p>${q.explanation}</p>`;
+      } else {
+        feedbackBox.className = "mt-5 p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-950 text-sm";
+        feedbackBox.innerHTML = `<div class="font-bold text-amber-900 mb-1">💡 Good try! The best answer is ${LETTERS[q.correctIndex]}.</div><p>${q.explanation}</p>`;
+      }
+    }
+
+    function handleNextClick() {
+      const hasAnswer = userAnswers[currentIndex] !== null;
+
+      // Gentle prompt if clicked before selecting an answer (or before checking in Tutor mode)
+      if (!hasAnswer || (testMode === "tutor" && !tutorChecked)) {
+        const promptBox = document.getElementById("status-prompt-box");
+        const hint = document.getElementById("selection-status-hint");
+        hint.textContent = !hasAnswer
+          ? "⚠️ Please choose A, B, C, or D before clicking Next!"
+          : "⚠️ Please click 'Check Answer' first to see how you did!";
+        hint.className = "text-amber-700 font-bold";
+
+        promptBox.classList.remove("shake-prompt");
+        void promptBox.offsetWidth; // trigger reflow
+        promptBox.classList.add("shake-prompt");
+        return;
+      }
+
+      // Cache highlights before advancing
+      const q = CHALLENGE_QUESTIONS[currentIndex];
+      if (q.layout === "split") {
+        passageHTMLCache[currentIndex] = document.getElementById("passage-body").innerHTML;
+      } else {
+        passageHTMLCache[currentIndex] = document.getElementById("standalone-sentence-box").innerHTML;
+      }
+
+      if (currentIndex < CHALLENGE_QUESTIONS.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResultsScreen();
+      }
+    }
+
+    // ==================== 3. STUDENT TOOLS TOOLBAR ====================
+    function toggleHighlighter(color) {
+      if (activeHighlighter === color) {
+        activeHighlighter = null;
+      } else {
+        activeHighlighter = color;
+        eliminatorActive = false;
+      }
+      updateToolbarUI();
+    }
+
+    function toggleEliminatorMode() {
+      eliminatorActive = !eliminatorActive;
+      if (eliminatorActive) {
+        activeHighlighter = null;
+      }
+      updateToolbarUI();
+      renderChoices();
+    }
+
+    function toggleLineReader() {
+      lineReaderActive = !lineReaderActive;
+      document.getElementById("line-reader-bar").classList.toggle("hidden", !lineReaderActive);
+      updateToolbarUI();
+    }
+
+    function setTextSize(size) {
+      textSize = size;
+      ["small", "medium", "large"].forEach(s => {
+        const btn = document.getElementById(`size-btn-${s}`);
+        btn.className = s === size
+          ? "px-2 py-1 rounded-md text-xs font-bold bg-[#0284c7] text-white transition cursor-pointer"
+          : "px-2 py-1 rounded-md text-xs font-bold text-slate-300 hover:bg-slate-700 transition cursor-pointer";
+      });
+      applyTextSize();
+    }
+
+    function applyTextSize() {
+      const passageBody = document.getElementById("passage-body");
+      const standaloneBox = document.getElementById("standalone-sentence-box");
+      const stem = document.getElementById("question-stem");
+      const choiceTexts = document.querySelectorAll(".choice-text");
+
+      const mapSizes = {
+        small: { passage: "15px", stem: "16px", choice: "14px" },
+        medium: { passage: "17px", stem: "18px", choice: "16px" },
+        large: { passage: "20px", stem: "21px", choice: "18px" }
+      };
+
+      const chosen = mapSizes[textSize];
+      if (passageBody) passageBody.style.fontSize = chosen.passage;
+      if (standaloneBox) standaloneBox.style.fontSize = chosen.passage;
+      if (stem) stem.style.fontSize = chosen.stem;
+      choiceTexts.forEach(el => (el.style.fontSize = chosen.choice));
+    }
+
+    function updateToolbarUI() {
+      const yBtn = document.getElementById("tool-hl-yellow");
+      const pBtn = document.getElementById("tool-hl-pink");
+      const elBtn = document.getElementById("tool-eliminator");
+      const lrBtn = document.getElementById("tool-linereader");
+      const banner = document.getElementById("tool-banner");
+      const bannerText = document.getElementById("tool-banner-text");
+
+      yBtn.className = activeHighlighter === "yellow"
+        ? "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold bg-amber-400 text-slate-950 transition cursor-pointer"
+        : "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer";
+
+      pBtn.className = activeHighlighter === "pink"
+        ? "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold bg-pink-400 text-slate-950 transition cursor-pointer"
+        : "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold text-slate-200 hover:bg-slate-700 transition cursor-pointer";
+
+      elBtn.className = eliminatorActive
+        ? "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-rose-400 bg-rose-500/25 text-rose-200 text-xs font-bold transition cursor-pointer"
+        : "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer";
+
+      lrBtn.className = lineReaderActive
+        ? "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-sky-400 bg-sky-500/25 text-sky-200 text-xs font-bold transition cursor-pointer"
+        : "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer";
+
+      document.body.classList.remove("highlighter-yellow-active", "highlighter-pink-active");
+      if (activeHighlighter === "yellow") document.body.classList.add("highlighter-yellow-active");
+      if (activeHighlighter === "pink") document.body.classList.add("highlighter-pink-active");
+
+      if (activeHighlighter) {
+        banner.classList.remove("hidden");
+        bannerText.textContent = `🖍️ ${activeHighlighter === "yellow" ? "Yellow" : "Pink"} Highlighter Active: Drag across any text in the passage to highlight key clues.`;
+      } else if (eliminatorActive) {
+        banner.classList.remove("hidden");
+        bannerText.textContent = "❌ Answer Eliminator Active: Click any option (or its 'X' button) to cross out choices you know are wrong.";
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    // Text Selection Highlighting (Supports both Yellow & Pink)
+    document.addEventListener("mouseup", handlePassageTextHighlight);
+    document.addEventListener("touchend", handlePassageTextHighlight);
+
+    function handlePassageTextHighlight() {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) return;
+
+      const q = CHALLENGE_QUESTIONS[currentIndex];
+      const targetContainer = q.layout === "split"
+        ? document.getElementById("passage-body")
+        : document.getElementById("standalone-sentence-box");
+
+      if (!targetContainer || !targetContainer.contains(selection.anchorNode) || !targetContainer.contains(selection.focusNode)) {
+        return;
+      }
+
+      try {
+        const range = selection.getRangeAt(0);
+        if (range.toString().trim().length === 0) return;
+
+        const span = document.createElement("span");
+        span.className = activeHighlighter === "pink" ? "map-highlight-pink" : "map-highlight-yellow";
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        selection.removeAllRanges();
+        passageHTMLCache[currentIndex] = targetContainer.innerHTML;
+      } catch (err) {
+        selection.removeAllRanges();
+      }
+    }
+
+    function clearHighlights() {
+      const q = CHALLENGE_QUESTIONS[currentIndex];
+      if (q.layout === "split") {
+        const passageBody = document.getElementById("passage-body");
+        if (q.isPoem) {
+          passageBody.innerHTML = q.passageParagraphs
+            .map(stanza => `<p class="poem-stanza whitespace-pre-line pl-3 border-l-2 border-sky-200">${stanza}</p>`)
+            .join("");
+        } else {
+          passageBody.innerHTML = q.passageParagraphs.map(p => `<p>${p}</p>`).join("");
+        }
+        passageHTMLCache[currentIndex] = passageBody.innerHTML;
+      } else {
+        const standaloneBox = document.getElementById("standalone-sentence-box");
+        standaloneBox.innerHTML = q.standalonePrompt
+          .split("\n")
+          .map((line, i) => i === 0
+            ? `<div class="text-xs font-sans font-bold uppercase tracking-wider text-slate-400 mb-1.5">${line}</div>`
+            : `<p class="text-slate-900 font-normal leading-relaxed">${line}</p>`)
+          .join("");
+        passageHTMLCache[currentIndex] = standaloneBox.innerHTML;
+      }
+      applyTextSize();
+    }
+
+    // Line Reader Tracking
+    document.addEventListener("mousemove", (e) => {
+      if (!lineReaderActive) return;
+      document.getElementById("line-reader-bar").style.top = `${Math.max(54, e.clientY - 19)}px`;
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (!lineReaderActive || !e.touches[0]) return;
+      document.getElementById("line-reader-bar").style.top = `${Math.max(54, e.touches[0].clientY - 19)}px`;
+    }, { passive: true });
+
+    // ==================== 4. END-OF-TEST NWEA SCORE REPORT ====================
+    function showResultsScreen() {
+      lineReaderActive = false;
+      document.getElementById("line-reader-bar").classList.add("hidden");
+      document.getElementById("test-screen").classList.add("hidden");
+      document.getElementById("results-screen").classList.remove("hidden");
+
+      const studentName = document.getElementById("student-name-input").value.trim() || "Reader";
+      const total = CHALLENGE_QUESTIONS.length;
+      let correctCount = 0;
+
+      const categories = {
+        "Literary Text": { correct: 0, total: 0 },
+        "Informational Text": { correct: 0, total: 0 },
+        "Vocabulary & Word Structure": { correct: 0, total: 0 }
+      };
+
+      CHALLENGE_QUESTIONS.forEach((q, idx) => {
+        const isOk = userAnswers[idx] === q.correctIndex;
+        if (isOk) correctCount++;
+        if (categories[q.category]) {
+          categories[q.category].total++;
+          if (isOk) categories[q.category].correct++;
+        }
+      });
+
+      const pct = Math.round((correctCount / total) * 100);
+      document.getElementById("results-headline").textContent =
+        pct === 100
+          ? `Perfect Score, ${studentName}!`
+          : pct >= 75
+            ? `Awesome Work, ${studentName}!`
+            : `Great Practice, ${studentName}!`;
+
+      document.getElementById("results-score-fraction").textContent = `${correctCount} / ${total}`;
+      document.getElementById("results-score-percent").textContent = `${pct}% Mastery`;
+
+      // Render Category Breakdown Cards
+      const breakdownGrid = document.getElementById("category-breakdown-grid");
+      breakdownGrid.innerHTML = Object.entries(categories).map(([catName, stats]) => {
+        const catPct = Math.round((stats.correct / stats.total) * 100);
+        const strong = stats.correct === stats.total;
+        return `
+          <div class="bg-white rounded-xl border ${strong ? "border-emerald-200" : "border-slate-200"} p-4 shadow-2xs">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-800">${catName}</span>
+              <span class="text-xs font-extrabold px-2 py-0.5 rounded-md ${strong ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"}">
+                ${stats.correct}/${stats.total}
+              </span>
+            </div>
+            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mt-3">
+              <div class="h-full ${strong ? "bg-emerald-500" : "bg-[#0284c7]"} rounded-full" style="width: ${catPct}%"></div>
+            </div>
+            <div class="text-[11px] text-slate-500 font-medium mt-1.5">
+              ${strong ? "★ Goal Area Mastered" : "Keep practicing this skill"}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Render Expandable Question-by-Question Review
+      allReviewsExpanded = false;
+      document.getElementById("expand-all-btn").textContent = "Expand All";
+      const reviewList = document.getElementById("review-list");
+
+      reviewList.innerHTML = CHALLENGE_QUESTIONS.map((q, idx) => {
+        const chosen = userAnswers[idx];
+        const isCorrect = chosen === q.correctIndex;
+
+        return `
+          <div class="bg-white rounded-xl border ${isCorrect ? "border-emerald-200" : "border-amber-300"} shadow-2xs overflow-hidden">
+            <button type="button" onclick="toggleReviewItem(${idx})" class="w-full px-5 py-4 flex items-center justify-between gap-3 text-left hover:bg-slate-50/80 transition cursor-pointer">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center shrink-0 ${
+                  isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
+                }">
+                  Q${idx + 1}
+                </span>
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold uppercase tracking-wider text-[#0284c7]">${q.category} • ${q.skillTag}</div>
+                  <div class="text-sm font-bold text-slate-900 truncate">${q.stem}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
+                  isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
+                }">
+                  ${isCorrect ? "✓ Correct" : "✗ Review"}
+                </span>
+                <svg id="chevron-${idx}" class="w-4 h-4 text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+
+            <div id="review-body-${idx}" class="hidden px-5 pb-5 pt-2 border-t border-slate-100 space-y-3 bg-slate-50/50">
+              <p class="text-sm font-bold text-slate-900">${q.stem}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm">
+                <div class="p-3 rounded-xl border ${isCorrect ? "bg-emerald-50 border-emerald-200 text-emerald-950" : "bg-rose-50 border-rose-200 text-rose-950"}">
+                  <div class="text-[10px] font-extrabold uppercase tracking-wider opacity-75">Your Answer</div>
+                  <div class="font-semibold mt-0.5">${chosen !== null ? `${LETTERS[chosen]}. ${q.choices[chosen]}` : "No answer selected"}</div>
+                </div>
+                <div class="p-3 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-950">
+                  <div class="text-[10px] font-extrabold uppercase tracking-wider opacity-75">Correct Answer</div>
+                  <div class="font-semibold mt-0.5">${LETTERS[q.correctIndex]}. ${q.choices[q.correctIndex]}</div>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-700">
+                <span class="font-bold text-slate-900">Explanation: </span>${q.explanation}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleReviewItem(idx) {
+      const body = document.getElementById(`review-body-${idx}`);
+      const chev = document.getElementById(`chevron-${idx}`);
+      const isHidden = body.classList.contains("hidden");
+      body.classList.toggle("hidden", !isHidden);
+      chev.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+    }
+
+    function toggleAllReviews() {
+      allReviewsExpanded = !allReviewsExpanded;
+      document.getElementById("expand-all-btn").textContent = allReviewsExpanded ? "Collapse All" : "Expand All";
+      CHALLENGE_QUESTIONS.forEach((_, idx) => {
+        const body = document.getElementById(`review-body-${idx}`);
+        const chev = document.getElementById(`chevron-${idx}`);
+        body.classList.toggle("hidden", !allReviewsExpanded);
+        chev.style.transform = allReviewsExpanded ? "rotate(180deg)" : "rotate(0deg)";
+      });
+    }
+
+    function resetToStart() {
+      document.getElementById("results-screen").classList.add("hidden");
+      document.getElementById("test-screen").classList.add("hidden");
+      document.getElementById("start-screen").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
