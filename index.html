@@ -13,7 +13,7 @@
     <header class="text-center text-white mb-10">
       <div class="inline-flex w-14 h-14 rounded-2xl bg-[#0284c7] items-center justify-center text-2xl font-extrabold shadow-lg mb-4">★</div>
       <h1 class="text-3xl sm:text-4xl font-extrabold">Kids Practice Hub</h1>
-      <p class="text-sky-100 mt-2 max-w-xl mx-auto">Free MAP-style practice for Grades 2–5. Pick a subject, choose a set, and start reading!</p>
+      <p class="text-sky-100 mt-2 max-w-xl mx-auto">Free MAP-style practice for Grades 2–5. Pick a subject, choose a set, and start practicing!</p>
     </header>
 
     <!-- Subjects are built from the SUBJECTS list in the script below -->
@@ -43,7 +43,10 @@
       {
         name: "Math",
         icon: "➗",
-        sets: [] // coming soon — add math sets here, e.g. { title: "...", file: "math/set-1.html", level: "Grade 3", about: "..." }
+        sets: [
+          { title: "Grade 3 Math Adaptive (10 questions)", file: "math/grade3-adaptive.html", level: "RIT ~177–207",
+            about: "Multiplication, division, fractions, time, money, area, perimeter and shapes. Adjusts after each answer." }
+        ]
       }
     ];
 
